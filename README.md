@@ -1,3 +1,6 @@
+# Departures from [Aqua](https://github.com/jedireza/aqua)
+- Following Hapi [code style](https://gist.github.com/hueniverse/a06f6315ea736ed1b46d), except opting instead to use 2-spaces (not 4-spaces).
+
 # Aqua
 
 A website and user system starter. Implemented with Hapi, React and Flux.
