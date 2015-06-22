@@ -8,9 +8,9 @@ var lab = exports.lab = Lab.script();
 
 lab.experiment('Admin Routes', function () {
 
-    lab.test('it loads', function (done) {
+  lab.test('it loads', function (done) {
 
-        Code.expect(Routes).to.exist();
-        done();
-    });
+    Code.expect(Routes).to.exist();
+    done();
+  });
 });

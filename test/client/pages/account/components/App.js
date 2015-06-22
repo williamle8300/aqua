@@ -11,27 +11,27 @@ var TestUtils = React.addons.TestUtils;
 var Route = ReactRouter.Route;
 var DefaultRoute = ReactRouter.DefaultRoute;
 var Routes = React.createElement(Route,
-    { path: '/account', name: 'app', handler: App },
-    React.createElement(DefaultRoute, {
-        name: 'home', handler: RouteHelpers.StubHandler
-    }),
-    React.createElement(Route, {
-        path: 'settings', name: 'settings', handler: RouteHelpers.StubHandler
-    })
+  { path: '/account', name: 'app', handler: App },
+  React.createElement(DefaultRoute, {
+    name: 'home', handler: RouteHelpers.StubHandler
+  }),
+  React.createElement(Route, {
+    path: 'settings', name: 'settings', handler: RouteHelpers.StubHandler
+  })
 );
 
 
 lab.experiment('Account App Component', function () {
 
-    lab.test('it renders normally', function (done) {
+  lab.test('it renders normally', function (done) {
 
-        ReactRouter.run(Routes, '/account', function (Handler) {
+    ReactRouter.run(Routes, '/account', function (Handler) {
 
-            var HandlerEl = React.createElement(Handler, {});
-            var mainElement = TestUtils.renderIntoDocument(HandlerEl);
+      var HandlerEl = React.createElement(Handler, {});
+      var mainElement = TestUtils.renderIntoDocument(HandlerEl);
 
-            Code.expect(mainElement).to.exist();
-            done();
-        });
+      Code.expect(mainElement).to.exist();
+      done();
     });
+  });
 });

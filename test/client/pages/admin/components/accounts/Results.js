@@ -11,38 +11,38 @@ var TestUtils = React.addons.TestUtils;
 
 lab.experiment('Admin Account Results', function () {
 
-    lab.test('it renders normally', function (done) {
+  lab.test('it renders normally', function (done) {
 
-        var ResultsEl = React.createElement(Results, {});
-        var results = TestUtils.renderIntoDocument(ResultsEl);
+    var ResultsEl = React.createElement(Results, {});
+    var results = TestUtils.renderIntoDocument(ResultsEl);
 
-        Code.expect(results).to.exist();
-        done();
-    });
-
-
-    lab.test('it handles unmounting', function (done) {
-
-        var container = global.document.createElement('div');
-        var ResultsEl = React.createElement(Results, {});
-
-        React.render(ResultsEl, container);
-        React.unmountComponentAtNode(container);
-
-        done();
-    });
+    Code.expect(results).to.exist();
+    done();
+  });
 
 
-    lab.test('it renders with data', function (done) {
+  lab.test('it handles unmounting', function (done) {
 
-        var mockProps = {
-            data: [{ _id: '1D', name: {} }, { _id: '2D', name: {} }]
-        };
-        var ResultsWithContext = StubRouterContext(Results, {});
-        var ResultsEl = React.createElement(ResultsWithContext, mockProps);
-        var results = TestUtils.renderIntoDocument(ResultsEl);
+    var container = global.document.createElement('div');
+    var ResultsEl = React.createElement(Results, {});
 
-        Code.expect(results).to.exist();
-        done();
-    });
+    React.render(ResultsEl, container);
+    React.unmountComponentAtNode(container);
+
+    done();
+  });
+
+
+  lab.test('it renders with data', function (done) {
+
+    var mockProps = {
+      data: [{ _id: '1D', name: {} }, { _id: '2D', name: {} }]
+    };
+    var ResultsWithContext = StubRouterContext(Results, {});
+    var ResultsEl = React.createElement(ResultsWithContext, mockProps);
+    var results = TestUtils.renderIntoDocument(ResultsEl);
+
+    Code.expect(results).to.exist();
+    done();
+  });
 });

@@ -10,28 +10,28 @@ var TestUtils = React.addons.TestUtils;
 
 lab.experiment('TextControl', function () {
 
-    lab.test('it renders normally', function (done) {
+  lab.test('it renders normally', function (done) {
 
-        var props = {};
-        var TextControlEl = React.createElement(TextControl, props);
-        var textControl = TestUtils.renderIntoDocument(TextControlEl);
-        var input = TestUtils.findRenderedDOMComponentWithTag(textControl, 'input');
+    var props = {};
+    var TextControlEl = React.createElement(TextControl, props);
+    var textControl = TestUtils.renderIntoDocument(TextControlEl);
+    var input = TestUtils.findRenderedDOMComponentWithTag(textControl, 'input');
 
-        Code.expect(input).to.exist();
-        done();
-    });
+    Code.expect(input).to.exist();
+    done();
+  });
 
 
-    lab.test('it renders disabled', function (done) {
+  lab.test('it renders disabled', function (done) {
 
-        var props = {
-            disabled: true
-        };
-        var TextControlEl = React.createElement(TextControl, props);
-        var textControl = TestUtils.renderIntoDocument(TextControlEl);
-        var input = TestUtils.findRenderedDOMComponentWithTag(textControl, 'input');
+    var props = {
+      disabled: true
+    };
+    var TextControlEl = React.createElement(TextControl, props);
+    var textControl = TestUtils.renderIntoDocument(TextControlEl);
+    var input = TestUtils.findRenderedDOMComponentWithTag(textControl, 'input');
 
-        Code.expect(input.getDOMNode().disabled).to.equal(true);
-        done();
-    });
+    Code.expect(input.getDOMNode().disabled).to.equal(true);
+    done();
+  });
 });

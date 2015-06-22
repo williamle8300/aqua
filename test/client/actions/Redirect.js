@@ -7,78 +7,78 @@ var RedirectConstants = require('../../../client/constants/Redirect');
 
 var lab = exports.lab = Lab.script();
 var stub = {
-    Dispatcher: {
-        handleAction: function () {
+  Dispatcher: {
+    handleAction: function () {
 
-            stub.Dispatcher.handleAction.guts.apply(null, arguments);
-        }
+      stub.Dispatcher.handleAction.guts.apply(null, arguments);
     }
+  }
 };
 var RedirectActions = Proxyquire('../../../client/actions/Redirect', {
-    'flux-dispatcher': stub.Dispatcher
+  'flux-dispatcher': stub.Dispatcher
 });
 var ActionTypes = RedirectConstants.ActionTypes;
 
 
 lab.experiment('Redirect Actions', function () {
 
-    lab.test('it handles saveReturnUrl', function (done) {
+  lab.test('it handles saveReturnUrl', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (type, data) {
+    stub.Dispatcher.handleAction.guts = function (type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.SAVE_RETURN_URL_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.SAVE_RETURN_URL_RESPONSE) {
+        done();
+      }
+    };
 
-        global.window.localStorage = {
-            setItem: function () {}
-        };
+    global.window.localStorage = {
+      setItem: function () {}
+    };
 
-        RedirectActions.saveReturnUrl();
-    });
-
-
-    lab.test('it handles saveReturnUrl when there is a query string', function (done) {
-
-        global.window.location.search = '?space=race';
-        global.window.localStorage = {
-            setItem: function () {}
-        };
-
-        stub.Dispatcher.handleAction.guts = function (type, data) {
-
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
-
-            if (type === ActionTypes.SAVE_RETURN_URL_RESPONSE) {
-                done();
-            }
-        };
-
-        RedirectActions.saveReturnUrl();
-    });
+    RedirectActions.saveReturnUrl();
+  });
 
 
-    lab.test('it handles clearReturnUrl', function (done) {
+  lab.test('it handles saveReturnUrl when there is a query string', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (type, data) {
+    global.window.location.search = '?space=race';
+    global.window.localStorage = {
+      setItem: function () {}
+    };
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+    stub.Dispatcher.handleAction.guts = function (type, data) {
 
-            if (type === ActionTypes.CLEAR_RETURN_URL_RESPONSE) {
-                done();
-            }
-        };
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-        global.window.localStorage = {
-            removeItem: function () {
+      if (type === ActionTypes.SAVE_RETURN_URL_RESPONSE) {
+        done();
+      }
+    };
 
-                return '';
-            }
-        };
+    RedirectActions.saveReturnUrl();
+  });
 
-        RedirectActions.clearReturnUrl();
-    });
+
+  lab.test('it handles clearReturnUrl', function (done) {
+
+    stub.Dispatcher.handleAction.guts = function (type, data) {
+
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
+
+      if (type === ActionTypes.CLEAR_RETURN_URL_RESPONSE) {
+        done();
+      }
+    };
+
+    global.window.localStorage = {
+      removeItem: function () {
+
+        return '';
+      }
+    };
+
+    RedirectActions.clearReturnUrl();
+  });
 });

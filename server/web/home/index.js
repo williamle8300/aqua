@@ -1,19 +1,19 @@
 exports.register = function (plugin, options, next) {
 
-    plugin.route({
-        method: 'GET',
-        path: '/',
-        handler: function (request, reply) {
+  plugin.route({
+    method: 'GET',
+    path: '/',
+    handler: function (request, reply) {
 
-            return reply.view('home/index');
-        }
-    });
+      return reply.view('home/index');
+    }
+  });
 
 
-    next();
+  next();
 };
 
 
 exports.register.attributes = {
-    name: 'web/home'
+  name: 'web/home'
 };

@@ -12,72 +12,72 @@ var request, server;
 
 lab.beforeEach(function (done) {
 
-    var plugins = [ MailerPlugin, ContactPlugin ];
-    server = new Hapi.Server();
-    server.connection({ port: Config.get('/port/web') });
-    server.register(plugins, function (err) {
+  var plugins = [ MailerPlugin, ContactPlugin ];
+  server = new Hapi.Server();
+  server.connection({ port: Config.get('/port/web') });
+  server.register(plugins, function (err) {
 
-        if (err) {
-            return done(err);
-        }
+    if (err) {
+      return done(err);
+    }
 
-        done();
-    });
+    done();
+  });
 });
 
 
 lab.experiment('Contact Plugin', function () {
 
-    lab.beforeEach(function (done) {
+  lab.beforeEach(function (done) {
 
-        request = {
-            method: 'POST',
-            url: '/contact',
-            payload: {
-                name: 'Toast Man',
-                email: 'mr@toast.show',
-                message: 'I love you man.'
-            }
-        };
+    request = {
+      method: 'POST',
+      url: '/contact',
+      payload: {
+        name: 'Toast Man',
+        email: 'mr@toast.show',
+        message: 'I love you man.'
+      }
+    };
 
-        done();
+    done();
+  });
+
+
+  lab.test('it returns an error when send email fails', function (done) {
+
+    var realSendEmail = server.plugins.mailer.sendEmail;
+    server.plugins.mailer.sendEmail = function (options, template, context, callback) {
+
+      callback(Error('send email failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+
+      server.plugins.mailer.sendEmail = realSendEmail;
+
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when send email fails', function (done) {
+  lab.test('it returns success after sending an email', function (done) {
 
-        var realSendEmail = server.plugins.mailer.sendEmail;
-        server.plugins.mailer.sendEmail = function (options, template, context, callback) {
+    var realSendEmail = server.plugins.mailer.sendEmail;
+    server.plugins.mailer.sendEmail = function (options, template, context, callback) {
 
-            callback(Error('send email failed'));
-        };
+      callback(null, {});
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(500);
+      Code.expect(response.statusCode).to.equal(200);
 
-            server.plugins.mailer.sendEmail = realSendEmail;
+      server.plugins.mailer.sendEmail = realSendEmail;
 
-            done();
-        });
+      done();
     });
-
-
-    lab.test('it returns success after sending an email', function (done) {
-
-        var realSendEmail = server.plugins.mailer.sendEmail;
-        server.plugins.mailer.sendEmail = function (options, template, context, callback) {
-
-            callback(null, {});
-        };
-
-        server.inject(request, function (response) {
-
-            Code.expect(response.statusCode).to.equal(200);
-
-            server.plugins.mailer.sendEmail = realSendEmail;
-
-            done();
-        });
-    });
+  });
 });

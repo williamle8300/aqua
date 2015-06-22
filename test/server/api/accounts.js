@@ -18,1078 +18,1078 @@ var ModelsPlugin, request, server, stub;
 
 lab.before(function (done) {
 
-    stub = {
-        Account: {},
-        Status: {},
-        User: {}
-    };
+  stub = {
+    Account: {},
+    Status: {},
+    User: {}
+  };
 
-    var proxy = {};
-    proxy[Path.join(process.cwd(), './server/models/account')] = stub.Account;
-    proxy[Path.join(process.cwd(), './server/models/status')] = stub.Status;
-    proxy[Path.join(process.cwd(), './server/models/user')] = stub.User;
+  var proxy = {};
+  proxy[Path.join(process.cwd(), './server/models/account')] = stub.Account;
+  proxy[Path.join(process.cwd(), './server/models/status')] = stub.Status;
+  proxy[Path.join(process.cwd(), './server/models/user')] = stub.User;
 
-    ModelsPlugin = {
-        register: Proxyquire('hapi-mongo-models', proxy),
-        options: Manifest.get('/plugins')['hapi-mongo-models']
-    };
+  ModelsPlugin = {
+    register: Proxyquire('hapi-mongo-models', proxy),
+    options: Manifest.get('/plugins')['hapi-mongo-models']
+  };
 
-    var plugins = [ HapiAuth, ModelsPlugin, AuthPlugin, AccountPlugin ];
-    server = new Hapi.Server();
-    server.connection({ port: Config.get('/port/web') });
-    server.register(plugins, function (err) {
+  var plugins = [ HapiAuth, ModelsPlugin, AuthPlugin, AccountPlugin ];
+  server = new Hapi.Server();
+  server.connection({ port: Config.get('/port/web') });
+  server.register(plugins, function (err) {
 
-        if (err) {
-            return done(err);
-        }
+    if (err) {
+      return done(err);
+    }
 
-        done();
-    });
+    done();
+  });
 });
 
 
 lab.after(function (done) {
 
-    server.plugins['hapi-mongo-models'].BaseModel.disconnect();
-    done();
+  server.plugins['hapi-mongo-models'].BaseModel.disconnect();
+  done();
 });
 
 
 lab.experiment('Accounts Plugin Result List', function () {
 
-    lab.beforeEach(function (done) {
+  lab.beforeEach(function (done) {
 
-        request = {
-            method: 'GET',
-            url: '/accounts',
-            credentials: AuthenticatedAdmin
-        };
+    request = {
+      method: 'GET',
+      url: '/accounts',
+      credentials: AuthenticatedAdmin
+    };
 
-        done();
+    done();
+  });
+
+
+  lab.test('it returns an error when paged find fails', function (done) {
+
+    stub.Account.pagedFind = function () {
+
+      var args = Array.prototype.slice.call(arguments);
+      var callback = args.pop();
+
+      callback(Error('paged find failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when paged find fails', function (done) {
+  lab.test('it returns an array of documents successfully using filters', function (done) {
 
-        stub.Account.pagedFind = function () {
+    stub.Account.pagedFind = function () {
 
-            var args = Array.prototype.slice.call(arguments);
-            var callback = args.pop();
+      var args = Array.prototype.slice.call(arguments);
+      var callback = args.pop();
 
-            callback(Error('paged find failed'));
-        };
+      callback(null, { data: [{}, {}, {}] });
+    };
 
-        server.inject(request, function (response) {
+    request.url = '/accounts?username=stimpy';
 
-            Code.expect(response.statusCode).to.equal(500);
+    server.inject(request, function (response) {
 
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(200);
+      Code.expect(response.result.data).to.be.an.array();
+      Code.expect(response.result.data[0]).to.be.an.object();
+
+      done();
     });
+  });
 
 
-    lab.test('it returns an array of documents successfully using filters', function (done) {
+  lab.test('it returns an array of documents successfully', function (done) {
 
-        stub.Account.pagedFind = function () {
+    stub.Account.pagedFind = function () {
 
-            var args = Array.prototype.slice.call(arguments);
-            var callback = args.pop();
+      var args = Array.prototype.slice.call(arguments);
+      var callback = args.pop();
 
-            callback(null, { data: [{}, {}, {}] });
-        };
+      callback(null, { data: [{}, {}, {}] });
+    };
 
-        request.url = '/accounts?username=stimpy';
+    server.inject(request, function (response) {
 
-        server.inject(request, function (response) {
+      Code.expect(response.statusCode).to.equal(200);
+      Code.expect(response.result.data).to.be.an.array();
+      Code.expect(response.result.data[0]).to.be.an.object();
 
-            Code.expect(response.statusCode).to.equal(200);
-            Code.expect(response.result.data).to.be.an.array();
-            Code.expect(response.result.data[0]).to.be.an.object();
-
-            done();
-        });
+      done();
     });
-
-
-    lab.test('it returns an array of documents successfully', function (done) {
-
-        stub.Account.pagedFind = function () {
-
-            var args = Array.prototype.slice.call(arguments);
-            var callback = args.pop();
-
-            callback(null, { data: [{}, {}, {}] });
-        };
-
-        server.inject(request, function (response) {
-
-            Code.expect(response.statusCode).to.equal(200);
-            Code.expect(response.result.data).to.be.an.array();
-            Code.expect(response.result.data[0]).to.be.an.object();
-
-            done();
-        });
-    });
+  });
 });
 
 
 lab.experiment('Accounts Plugin Read', function () {
 
-    lab.beforeEach(function (done) {
+  lab.beforeEach(function (done) {
 
-        request = {
-            method: 'GET',
-            url: '/accounts/93EP150D35',
-            credentials: AuthenticatedAdmin
-        };
+    request = {
+      method: 'GET',
+      url: '/accounts/93EP150D35',
+      credentials: AuthenticatedAdmin
+    };
 
-        done();
+    done();
+  });
+
+
+  lab.test('it returns an error when find by id fails', function (done) {
+
+    stub.Account.findById = function (id, callback) {
+
+      callback(Error('find by id failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when find by id fails', function (done) {
+  lab.test('it returns a not found when find by id misses', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    stub.Account.findById = function (id, callback) {
 
-            callback(Error('find by id failed'));
-        };
+      callback();
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(500);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(404);
+      Code.expect(response.result.message).to.match(/document not found/i);
+
+      done();
     });
+  });
 
 
-    lab.test('it returns a not found when find by id misses', function (done) {
+  lab.test('it returns a document successfully', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    stub.Account.findById = function (id, callback) {
 
-            callback();
-        };
+      callback(null, { _id: '93EP150D35' });
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(404);
-            Code.expect(response.result.message).to.match(/document not found/i);
+      Code.expect(response.statusCode).to.equal(200);
+      Code.expect(response.result).to.be.an.object();
 
-            done();
-        });
+      done();
     });
-
-
-    lab.test('it returns a document successfully', function (done) {
-
-        stub.Account.findById = function (id, callback) {
-
-            callback(null, { _id: '93EP150D35' });
-        };
-
-        server.inject(request, function (response) {
-
-            Code.expect(response.statusCode).to.equal(200);
-            Code.expect(response.result).to.be.an.object();
-
-            done();
-        });
-    });
+  });
 });
 
 
 lab.experiment('Accounts Plugin (My) Read', function () {
 
-    lab.beforeEach(function (done) {
+  lab.beforeEach(function (done) {
 
-        request = {
-            method: 'GET',
-            url: '/accounts/my',
-            credentials: AuthenticatedAccount
-        };
+    request = {
+      method: 'GET',
+      url: '/accounts/my',
+      credentials: AuthenticatedAccount
+    };
 
-        done();
+    done();
+  });
+
+
+  lab.test('it returns an error when find by id fails', function (done) {
+
+    stub.Account.findById = function () {
+
+      var args = Array.prototype.slice.call(arguments);
+      var callback = args.pop();
+
+      callback(Error('find by id failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when find by id fails', function (done) {
+  lab.test('it returns a not found when find by id misses', function (done) {
 
-        stub.Account.findById = function () {
+    stub.Account.findById = function () {
 
-            var args = Array.prototype.slice.call(arguments);
-            var callback = args.pop();
+      var args = Array.prototype.slice.call(arguments);
+      var callback = args.pop();
 
-            callback(Error('find by id failed'));
-        };
+      callback();
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(500);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(404);
+      Code.expect(response.result.message).to.match(/document not found/i);
+
+      done();
     });
+  });
 
 
-    lab.test('it returns a not found when find by id misses', function (done) {
+  lab.test('it returns a document successfully', function (done) {
 
-        stub.Account.findById = function () {
+    stub.Account.findById = function () {
 
-            var args = Array.prototype.slice.call(arguments);
-            var callback = args.pop();
+      var args = Array.prototype.slice.call(arguments);
+      var callback = args.pop();
 
-            callback();
-        };
+      callback(null, { _id: '93EP150D35' });
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(404);
-            Code.expect(response.result.message).to.match(/document not found/i);
+      Code.expect(response.statusCode).to.equal(200);
+      Code.expect(response.result).to.be.an.object();
 
-            done();
-        });
+      done();
     });
-
-
-    lab.test('it returns a document successfully', function (done) {
-
-        stub.Account.findById = function () {
-
-            var args = Array.prototype.slice.call(arguments);
-            var callback = args.pop();
-
-            callback(null, { _id: '93EP150D35' });
-        };
-
-        server.inject(request, function (response) {
-
-            Code.expect(response.statusCode).to.equal(200);
-            Code.expect(response.result).to.be.an.object();
-
-            done();
-        });
-    });
+  });
 });
 
 
 lab.experiment('Accounts Plugin Create', function () {
 
-    lab.beforeEach(function (done) {
+  lab.beforeEach(function (done) {
 
-        request = {
-            method: 'POST',
-            url: '/accounts',
-            payload: {
-                name: 'Muddy Mudskipper'
-            },
-            credentials: AuthenticatedAdmin
-        };
+    request = {
+      method: 'POST',
+      url: '/accounts',
+      payload: {
+        name: 'Muddy Mudskipper'
+      },
+      credentials: AuthenticatedAdmin
+    };
 
-        done();
+    done();
+  });
+
+
+  lab.test('it returns an error when create fails', function (done) {
+
+    stub.Account.create = function (name, callback) {
+
+      callback(Error('create failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when create fails', function (done) {
+  lab.test('it creates a document successfully', function (done) {
 
-        stub.Account.create = function (name, callback) {
+    stub.Account.create = function (name, callback) {
 
-            callback(Error('create failed'));
-        };
+      callback(null, {});
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(500);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(200);
+      Code.expect(response.result).to.be.an.object();
+
+      done();
     });
-
-
-    lab.test('it creates a document successfully', function (done) {
-
-        stub.Account.create = function (name, callback) {
-
-            callback(null, {});
-        };
-
-        server.inject(request, function (response) {
-
-            Code.expect(response.statusCode).to.equal(200);
-            Code.expect(response.result).to.be.an.object();
-
-            done();
-        });
-    });
+  });
 });
 
 
 lab.experiment('Accounts Plugin Update', function () {
 
-    lab.beforeEach(function (done) {
+  lab.beforeEach(function (done) {
 
-        request = {
-            method: 'PUT',
-            url: '/accounts/93EP150D35',
-            payload: {
-                nameFirst: 'Muddy',
-                nameLast: 'Mudskipper'
-            },
-            credentials: AuthenticatedAdmin
-        };
+    request = {
+      method: 'PUT',
+      url: '/accounts/93EP150D35',
+      payload: {
+        nameFirst: 'Muddy',
+        nameLast: 'Mudskipper'
+      },
+      credentials: AuthenticatedAdmin
+    };
 
-        done();
+    done();
+  });
+
+
+  lab.test('it returns an error when update fails', function (done) {
+
+    stub.Account.findByIdAndUpdate = function (id, update, callback) {
+
+      callback(Error('update failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when update fails', function (done) {
+  lab.test('it returns not found when find by id misses', function (done) {
 
-        stub.Account.findByIdAndUpdate = function (id, update, callback) {
+    stub.Account.findByIdAndUpdate = function (id, update, callback) {
 
-            callback(Error('update failed'));
-        };
+      callback(null, undefined);
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(500);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(404);
+      done();
     });
+  });
 
 
-    lab.test('it returns not found when find by id misses', function (done) {
+  lab.test('it updates a document successfully', function (done) {
 
-        stub.Account.findByIdAndUpdate = function (id, update, callback) {
+    stub.Account.findByIdAndUpdate = function (id, update, callback) {
 
-            callback(null, undefined);
-        };
+      callback(null, {});
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(404);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(200);
+      Code.expect(response.result).to.be.an.object();
+
+      done();
     });
-
-
-    lab.test('it updates a document successfully', function (done) {
-
-        stub.Account.findByIdAndUpdate = function (id, update, callback) {
-
-            callback(null, {});
-        };
-
-        server.inject(request, function (response) {
-
-            Code.expect(response.statusCode).to.equal(200);
-            Code.expect(response.result).to.be.an.object();
-
-            done();
-        });
-    });
+  });
 });
 
 
 lab.experiment('Accounts Plugin (My) Update', function () {
 
-    lab.beforeEach(function (done) {
+  lab.beforeEach(function (done) {
 
-        request = {
-            method: 'PUT',
-            url: '/accounts/my',
-            payload: {
-                nameFirst: 'Mud',
-                nameLast: 'Skipper'
-            },
-            credentials: AuthenticatedAccount
-        };
+    request = {
+      method: 'PUT',
+      url: '/accounts/my',
+      payload: {
+        nameFirst: 'Mud',
+        nameLast: 'Skipper'
+      },
+      credentials: AuthenticatedAccount
+    };
 
-        done();
+    done();
+  });
+
+
+  lab.test('it returns an error when update fails', function (done) {
+
+    stub.Account.findByIdAndUpdate = function () {
+
+      var args = Array.prototype.slice.call(arguments);
+      var callback = args.pop();
+
+      callback(Error('update failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when update fails', function (done) {
+  lab.test('it updates a document successfully', function (done) {
 
-        stub.Account.findByIdAndUpdate = function () {
+    stub.Account.findByIdAndUpdate = function () {
 
-            var args = Array.prototype.slice.call(arguments);
-            var callback = args.pop();
+      var args = Array.prototype.slice.call(arguments);
+      var callback = args.pop();
 
-            callback(Error('update failed'));
-        };
+      callback(null, {});
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(500);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(200);
+      Code.expect(response.result).to.be.an.object();
+
+      done();
     });
-
-
-    lab.test('it updates a document successfully', function (done) {
-
-        stub.Account.findByIdAndUpdate = function () {
-
-            var args = Array.prototype.slice.call(arguments);
-            var callback = args.pop();
-
-            callback(null, {});
-        };
-
-        server.inject(request, function (response) {
-
-            Code.expect(response.statusCode).to.equal(200);
-            Code.expect(response.result).to.be.an.object();
-
-            done();
-        });
-    });
+  });
 });
 
 
 lab.experiment('Accounts Plugin Link User', function () {
 
-    lab.beforeEach(function (done) {
+  lab.beforeEach(function (done) {
 
-        request = {
-            method: 'PUT',
-            url: '/accounts/93EP150D35/user',
-            payload: {
-                username: 'ren'
-            },
-            credentials: AuthenticatedAdmin
-        };
+    request = {
+      method: 'PUT',
+      url: '/accounts/93EP150D35/user',
+      payload: {
+        username: 'ren'
+      },
+      credentials: AuthenticatedAdmin
+    };
 
-        done();
+    done();
+  });
+
+
+  lab.test('it returns an error when (Account) find by id fails', function (done) {
+
+    stub.Account.findById = function (id, callback) {
+
+      callback(Error('find by id failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when (Account) find by id fails', function (done) {
+  lab.test('it returns not found when (Account) find by id misses', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    stub.Account.findById = function (id, callback) {
 
-            callback(Error('find by id failed'));
-        };
+      callback();
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(500);
-
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(404);
+      done();
     });
+  });
 
 
-    lab.test('it returns not found when (Account) find by id misses', function (done) {
+  lab.test('it returns an error when (User) find by username fails', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    stub.Account.findById = function (id, callback) {
 
-            callback();
-        };
+      callback(null, {});
+    };
 
-        server.inject(request, function (response) {
+    stub.User.findByUsername = function (id, callback) {
 
-            Code.expect(response.statusCode).to.equal(404);
-            done();
-        });
+      callback(Error('find by username failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when (User) find by username fails', function (done) {
+  lab.test('it returns not found when (User) find by username misses', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    stub.Account.findById = function (id, callback) {
 
-            callback(null, {});
-        };
+      callback(null, {});
+    };
 
-        stub.User.findByUsername = function (id, callback) {
+    stub.User.findByUsername = function (id, callback) {
 
-            callback(Error('find by username failed'));
-        };
+      callback();
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(500);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(404);
+      done();
     });
+  });
 
 
-    lab.test('it returns not found when (User) find by username misses', function (done) {
+  lab.test('it returns conflict when an account role already exists', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    stub.Account.findById = function (id, callback) {
 
-            callback(null, {});
-        };
+      callback(null, {});
+    };
 
-        stub.User.findByUsername = function (id, callback) {
+    stub.User.findByUsername = function (id, callback) {
 
-            callback();
-        };
+      var user = {
+        roles: {
+          account: {
+            id: '535H0W35',
+            name: 'Stimpson J Cat'
+          }
+        }
+      };
 
-        server.inject(request, function (response) {
+      callback(null, user);
+    };
 
-            Code.expect(response.statusCode).to.equal(404);
-            done();
-        });
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(409);
+      done();
     });
+  });
 
 
-    lab.test('it returns conflict when an account role already exists', function (done) {
+  lab.test('it returns conflict when the account is linked to another user', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    stub.Account.findById = function (id, callback) {
 
-            callback(null, {});
-        };
+      var account = {
+        _id: 'DUD3N0T1T',
+        user: {
+          id: '535H0W35',
+          name: 'ren'
+        }
+      };
 
-        stub.User.findByUsername = function (id, callback) {
+      callback(null, account);
+    };
 
-            var user = {
-                roles: {
-                    account: {
-                        id: '535H0W35',
-                        name: 'Stimpson J Cat'
-                    }
-                }
-            };
+    stub.User.findByUsername = function (id, callback) {
 
-            callback(null, user);
-        };
+      var user = {
+        _id: 'N0T1TDUD3',
+        roles: {
+          account: {
+            id: '93EP150D35',
+            name: 'Ren Höek'
+          }
+        }
+      };
 
-        server.inject(request, function (response) {
+      callback(null, user);
+    };
 
-            Code.expect(response.statusCode).to.equal(409);
-            done();
-        });
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(409);
+      done();
     });
+  });
 
 
-    lab.test('it returns conflict when the account is linked to another user', function (done) {
+  lab.test('it returns an error when find by id and update fails', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    stub.Account.findById = function (id, callback) {
 
-            var account = {
-                _id: 'DUD3N0T1T',
-                user: {
-                    id: '535H0W35',
-                    name: 'ren'
-                }
-            };
+      var account = {
+        _id: '93EP150D35',
+        name: {
+          first: 'Ren',
+          last: 'Höek'
+        }
+      };
 
-            callback(null, account);
-        };
+      callback(null, account);
+    };
 
-        stub.User.findByUsername = function (id, callback) {
+    stub.User.findByUsername = function (id, callback) {
 
-            var user = {
-                _id: 'N0T1TDUD3',
-                roles: {
-                    account: {
-                        id: '93EP150D35',
-                        name: 'Ren Höek'
-                    }
-                }
-            };
+      var user = {
+        _id: '535H0W35',
+        username: 'ren'
+      };
 
-            callback(null, user);
-        };
+      callback(null, user);
+    };
 
-        server.inject(request, function (response) {
+    stub.Account.findByIdAndUpdate = function (id, update, callback) {
 
-            Code.expect(response.statusCode).to.equal(409);
-            done();
-        });
+      callback(Error('find by id and update failed'));
+    };
+
+    stub.User.findByIdAndUpdate = function (id, update, callback) {
+
+      callback(Error('find by id and update failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when find by id and update fails', function (done) {
+  lab.test('it successfuly links an account and user', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    var account = {
+      _id: '93EP150D35',
+      name: {
+        first: 'Ren',
+        last: 'Höek'
+      }
+    };
+    var user = {
+      _id: '535H0W35',
+      username: 'ren',
+      roles: {}
+    };
 
-            var account = {
-                _id: '93EP150D35',
-                name: {
-                    first: 'Ren',
-                    last: 'Höek'
-                }
-            };
+    stub.Account.findById = function (id, callback) {
 
-            callback(null, account);
-        };
+      callback(null, account);
+    };
 
-        stub.User.findByUsername = function (id, callback) {
+    stub.User.findByUsername = function (id, callback) {
 
-            var user = {
-                _id: '535H0W35',
-                username: 'ren'
-            };
+      callback(null, user);
+    };
 
-            callback(null, user);
-        };
+    stub.Account.findByIdAndUpdate = function (id, update, callback) {
 
-        stub.Account.findByIdAndUpdate = function (id, update, callback) {
+      callback(null, account);
+    };
 
-            callback(Error('find by id and update failed'));
-        };
+    stub.User.findByIdAndUpdate = function (id, update, callback) {
 
-        stub.User.findByIdAndUpdate = function (id, update, callback) {
+      callback(null, user);
+    };
 
-            callback(Error('find by id and update failed'));
-        };
+    server.inject(request, function (response) {
 
-        server.inject(request, function (response) {
-
-            Code.expect(response.statusCode).to.equal(500);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(200);
+      done();
     });
-
-
-    lab.test('it successfuly links an account and user', function (done) {
-
-        var account = {
-            _id: '93EP150D35',
-            name: {
-                first: 'Ren',
-                last: 'Höek'
-            }
-        };
-        var user = {
-            _id: '535H0W35',
-            username: 'ren',
-            roles: {}
-        };
-
-        stub.Account.findById = function (id, callback) {
-
-            callback(null, account);
-        };
-
-        stub.User.findByUsername = function (id, callback) {
-
-            callback(null, user);
-        };
-
-        stub.Account.findByIdAndUpdate = function (id, update, callback) {
-
-            callback(null, account);
-        };
-
-        stub.User.findByIdAndUpdate = function (id, update, callback) {
-
-            callback(null, user);
-        };
-
-        server.inject(request, function (response) {
-
-            Code.expect(response.statusCode).to.equal(200);
-            done();
-        });
-    });
+  });
 });
 
 
 lab.experiment('Accounts Plugin Add Note', function () {
 
-    lab.beforeEach(function (done) {
+  lab.beforeEach(function (done) {
 
-        request = {
-            method: 'POST',
-            url: '/accounts/93EP150D35/notes',
-            payload: {
-                data: 'This is a wonderful note.'
-            },
-            credentials: AuthenticatedAdmin
-        };
+    request = {
+      method: 'POST',
+      url: '/accounts/93EP150D35/notes',
+      payload: {
+        data: 'This is a wonderful note.'
+      },
+      credentials: AuthenticatedAdmin
+    };
 
-        done();
+    done();
+  });
+
+
+  lab.test('it returns an error when find by id and update fails', function (done) {
+
+    stub.Account.findByIdAndUpdate = function (id, update, callback) {
+
+      callback(Error('find by id and update failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when find by id and update fails', function (done) {
+  lab.test('it successfully adds a note', function (done) {
 
-        stub.Account.findByIdAndUpdate = function (id, update, callback) {
+    stub.Account.findByIdAndUpdate = function (id, update, callback) {
 
-            callback(Error('find by id and update failed'));
-        };
+      callback(null, {});
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(500);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(200);
+      done();
     });
-
-
-    lab.test('it successfully adds a note', function (done) {
-
-        stub.Account.findByIdAndUpdate = function (id, update, callback) {
-
-            callback(null, {});
-        };
-
-        server.inject(request, function (response) {
-
-            Code.expect(response.statusCode).to.equal(200);
-            done();
-        });
-    });
+  });
 });
 
 
 lab.experiment('Accounts Plugin Update Status', function () {
 
-    lab.beforeEach(function (done) {
+  lab.beforeEach(function (done) {
 
-        request = {
-            method: 'POST',
-            url: '/accounts/93EP150D35/status',
-            payload: {
-                status: 'account-happy'
-            },
-            credentials: AuthenticatedAdmin
-        };
+    request = {
+      method: 'POST',
+      url: '/accounts/93EP150D35/status',
+      payload: {
+        status: 'account-happy'
+      },
+      credentials: AuthenticatedAdmin
+    };
 
-        done();
+    done();
+  });
+
+
+  lab.test('it returns an error when find by id (Status) fails', function (done) {
+
+    stub.Status.findById = function (id, callback) {
+
+      callback(Error('find by id failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when find by id (Status) fails', function (done) {
+  lab.test('it returns an error when find by id and update fails', function (done) {
 
-        stub.Status.findById = function (id, callback) {
+    stub.Status.findById = function (id, callback) {
 
-            callback(Error('find by id failed'));
-        };
+      callback(null, { _id: 'account-happy', name: 'Happy' });
+    };
 
-        server.inject(request, function (response) {
+    stub.Account.findByIdAndUpdate = function (id, update, callback) {
 
-            Code.expect(response.statusCode).to.equal(500);
-            done();
-        });
+      callback(Error('find by id and update failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when find by id and update fails', function (done) {
+  lab.test('it successfully updates the status', function (done) {
 
-        stub.Status.findById = function (id, callback) {
+    stub.Status.findById = function (id, callback) {
 
-            callback(null, { _id: 'account-happy', name: 'Happy' });
-        };
+      callback(null, { _id: 'account-happy', name: 'Happy' });
+    };
 
-        stub.Account.findByIdAndUpdate = function (id, update, callback) {
+    stub.Account.findByIdAndUpdate = function (id, update, callback) {
 
-            callback(Error('find by id and update failed'));
-        };
+      callback(null, {});
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(500);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(200);
+      done();
     });
-
-
-    lab.test('it successfully updates the status', function (done) {
-
-        stub.Status.findById = function (id, callback) {
-
-            callback(null, { _id: 'account-happy', name: 'Happy' });
-        };
-
-        stub.Account.findByIdAndUpdate = function (id, update, callback) {
-
-            callback(null, {});
-        };
-
-        server.inject(request, function (response) {
-
-            Code.expect(response.statusCode).to.equal(200);
-            done();
-        });
-    });
+  });
 });
 
 
 lab.experiment('Accounts Plugin Unlink User', function () {
 
-    lab.beforeEach(function (done) {
+  lab.beforeEach(function (done) {
 
-        request = {
-            method: 'DELETE',
-            url: '/accounts/93EP150D35/user',
-            credentials: AuthenticatedAdmin
-        };
+    request = {
+      method: 'DELETE',
+      url: '/accounts/93EP150D35/user',
+      credentials: AuthenticatedAdmin
+    };
 
-        done();
+    done();
+  });
+
+
+  lab.test('it returns an error when (Account) find by id fails', function (done) {
+
+    stub.Account.findById = function (id, callback) {
+
+      callback(Error('find by id failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when (Account) find by id fails', function (done) {
+  lab.test('it returns not found when (Account) find by id misses', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    stub.Account.findById = function (id, callback) {
 
-            callback(Error('find by id failed'));
-        };
+      callback();
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(500);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(404);
+      done();
     });
+  });
 
 
-    lab.test('it returns not found when (Account) find by id misses', function (done) {
+  lab.test('it returns early account is void of a user', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    stub.Account.findById = function (id, callback) {
 
-            callback();
-        };
+      callback(null, {});
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(404);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(200);
+      done();
     });
+  });
 
 
-    lab.test('it returns early account is void of a user', function (done) {
+  lab.test('it returns early account is void of a user.id', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    stub.Account.findById = function (id, callback) {
 
-            callback(null, {});
-        };
+      callback(null, { user: {} });
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(200);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(200);
+      done();
     });
+  });
 
 
-    lab.test('it returns early account is void of a user.id', function (done) {
+  lab.test('it returns an error when (User) find by id fails', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    stub.Account.findById = function (id, callback) {
 
-            callback(null, { user: {} });
-        };
+      var account = {
+        user: {
+          id: '93EP150D35',
+          name: 'ren'
+        }
+      };
 
-        server.inject(request, function (response) {
+      callback(null, account);
+    };
 
-            Code.expect(response.statusCode).to.equal(200);
-            done();
-        });
+    stub.User.findById = function (id, callback) {
+
+      callback(Error('find by id failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when (User) find by id fails', function (done) {
+  lab.test('it returns not found when (User) find by username misses', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    stub.Account.findById = function (id, callback) {
 
-            var account = {
-                user: {
-                    id: '93EP150D35',
-                    name: 'ren'
-                }
-            };
+      var account = {
+        user: {
+          id: '93EP150D35',
+          name: 'ren'
+        }
+      };
 
-            callback(null, account);
-        };
+      callback(null, account);
+    };
 
-        stub.User.findById = function (id, callback) {
+    stub.User.findById = function (id, callback) {
 
-            callback(Error('find by id failed'));
-        };
+      callback();
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(500);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(404);
+
+      done();
     });
+  });
 
 
-    lab.test('it returns not found when (User) find by username misses', function (done) {
+  lab.test('it returns an error when find by id and update fails', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    stub.Account.findById = function (id, callback) {
 
-            var account = {
-                user: {
-                    id: '93EP150D35',
-                    name: 'ren'
-                }
-            };
+      var account = {
+        _id: '93EP150D35',
+        user: {
+          id: '535H0W35',
+          name: 'ren'
+        }
+      };
 
-            callback(null, account);
-        };
+      callback(null, account);
+    };
 
-        stub.User.findById = function (id, callback) {
+    stub.User.findById = function (id, callback) {
 
-            callback();
-        };
+      var user = {
+        _id: '535H0W35',
+        roles: {
+          account: {
+            id: '93EP150D35',
+            name: 'Ren Höek'
+          }
+        }
+      };
 
-        server.inject(request, function (response) {
+      callback(null, user);
+    };
 
-            Code.expect(response.statusCode).to.equal(404);
+    stub.Account.findByIdAndUpdate = function (id, update, callback) {
 
-            done();
-        });
+      callback(Error('find by id and update failed'));
+    };
+
+    stub.User.findByIdAndUpdate = function (id, update, callback) {
+
+      callback(Error('find by id and update failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when find by id and update fails', function (done) {
+  lab.test('it successfully unlinks an account from a user', function (done) {
 
-        stub.Account.findById = function (id, callback) {
+    var user = {
+      _id: '535H0W35',
+      roles: {
+        account: {
+          id: '93EP150D35',
+          name: 'Ren Höek'
+        }
+      }
+    };
+    var account = {
+      _id: '93EP150D35',
+      user: {
+        id: '535H0W35',
+        name: 'ren'
+      }
+    };
 
-            var account = {
-                _id: '93EP150D35',
-                user: {
-                    id: '535H0W35',
-                    name: 'ren'
-                }
-            };
+    stub.Account.findById = function (id, callback) {
 
-            callback(null, account);
-        };
+      callback(null, account);
+    };
 
-        stub.User.findById = function (id, callback) {
+    stub.User.findById = function (id, callback) {
 
-            var user = {
-                _id: '535H0W35',
-                roles: {
-                    account: {
-                        id: '93EP150D35',
-                        name: 'Ren Höek'
-                    }
-                }
-            };
+      callback(null, user);
+    };
 
-            callback(null, user);
-        };
+    stub.Account.findByIdAndUpdate = function (id, update, callback) {
 
-        stub.Account.findByIdAndUpdate = function (id, update, callback) {
+      callback(null, account);
+    };
 
-            callback(Error('find by id and update failed'));
-        };
+    stub.User.findByIdAndUpdate = function (id, update, callback) {
 
-        stub.User.findByIdAndUpdate = function (id, update, callback) {
+      callback(null, user);
+    };
 
-            callback(Error('find by id and update failed'));
-        };
+    server.inject(request, function (response) {
 
-        server.inject(request, function (response) {
-
-            Code.expect(response.statusCode).to.equal(500);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(200);
+      done();
     });
-
-
-    lab.test('it successfully unlinks an account from a user', function (done) {
-
-        var user = {
-            _id: '535H0W35',
-            roles: {
-                account: {
-                    id: '93EP150D35',
-                    name: 'Ren Höek'
-                }
-            }
-        };
-        var account = {
-            _id: '93EP150D35',
-            user: {
-                id: '535H0W35',
-                name: 'ren'
-            }
-        };
-
-        stub.Account.findById = function (id, callback) {
-
-            callback(null, account);
-        };
-
-        stub.User.findById = function (id, callback) {
-
-            callback(null, user);
-        };
-
-        stub.Account.findByIdAndUpdate = function (id, update, callback) {
-
-            callback(null, account);
-        };
-
-        stub.User.findByIdAndUpdate = function (id, update, callback) {
-
-            callback(null, user);
-        };
-
-        server.inject(request, function (response) {
-
-            Code.expect(response.statusCode).to.equal(200);
-            done();
-        });
-    });
+  });
 });
 
 
 lab.experiment('Accounts Plugin Delete', function () {
 
-    lab.beforeEach(function (done) {
+  lab.beforeEach(function (done) {
 
-        request = {
-            method: 'DELETE',
-            url: '/accounts/93EP150D35',
-            credentials: AuthenticatedAdmin
-        };
+    request = {
+      method: 'DELETE',
+      url: '/accounts/93EP150D35',
+      credentials: AuthenticatedAdmin
+    };
 
-        done();
+    done();
+  });
+
+
+  lab.test('it returns an error when delete by id fails', function (done) {
+
+    stub.Account.findByIdAndDelete = function (id, callback) {
+
+      callback(Error('delete by id failed'));
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.statusCode).to.equal(500);
+      done();
     });
+  });
 
 
-    lab.test('it returns an error when delete by id fails', function (done) {
+  lab.test('it returns a not found when delete by id misses', function (done) {
 
-        stub.Account.findByIdAndDelete = function (id, callback) {
+    stub.Account.findByIdAndDelete = function (id, callback) {
 
-            callback(Error('delete by id failed'));
-        };
+      callback(null, undefined);
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(500);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(404);
+      Code.expect(response.result.message).to.match(/document not found/i);
+
+      done();
     });
+  });
 
 
-    lab.test('it returns a not found when delete by id misses', function (done) {
+  lab.test('it deletes a document successfully', function (done) {
 
-        stub.Account.findByIdAndDelete = function (id, callback) {
+    stub.Account.findByIdAndDelete = function (id, callback) {
 
-            callback(null, undefined);
-        };
+      callback(null, 1);
+    };
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(404);
-            Code.expect(response.result.message).to.match(/document not found/i);
+      Code.expect(response.statusCode).to.equal(200);
+      Code.expect(response.result.message).to.match(/success/i);
 
-            done();
-        });
+      done();
     });
-
-
-    lab.test('it deletes a document successfully', function (done) {
-
-        stub.Account.findByIdAndDelete = function (id, callback) {
-
-            callback(null, 1);
-        };
-
-        server.inject(request, function (response) {
-
-            Code.expect(response.statusCode).to.equal(200);
-            Code.expect(response.result.message).to.match(/success/i);
-
-            done();
-        });
-    });
+  });
 });

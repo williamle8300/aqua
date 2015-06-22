@@ -7,111 +7,111 @@ var Proxyquire = require('proxyquire');
 var lab = exports.lab = Lab.script();
 var TestUtils = React.addons.TestUtils;
 var stub = {
-    Actions: {}
+  Actions: {}
 };
 var Form = Proxyquire('../../../../../../client/pages/admin/components/admins/DetailsForm', {
-    '../../actions/Admin': stub.Actions
+  '../../actions/Admin': stub.Actions
 });
 var mockProps;
 
 
 lab.beforeEach(function (done) {
 
-    mockProps = {
-        data: {
-            name: {},
-            hasError: {},
-            help: {}
-        }
-    };
+  mockProps = {
+    data: {
+      name: {},
+      hasError: {},
+      help: {}
+    }
+  };
 
-    done();
+  done();
 });
 
 
 lab.experiment('Admin Admin Details Form', function () {
 
-    lab.test('it renders normally', function (done) {
+  lab.test('it renders normally', function (done) {
 
-        var FormEl = React.createElement(Form, mockProps);
-        var form = TestUtils.renderIntoDocument(FormEl);
+    var FormEl = React.createElement(Form, mockProps);
+    var form = TestUtils.renderIntoDocument(FormEl);
 
-        Code.expect(form).to.exist();
-        done();
-    });
-
-
-    lab.test('it handles unmounting', function (done) {
-
-        var container = global.document.createElement('div');
-        var FormEl = React.createElement(Form, mockProps);
-
-        React.render(FormEl, container);
-        React.unmountComponentAtNode(container);
-
-        done();
-    });
+    Code.expect(form).to.exist();
+    done();
+  });
 
 
-    lab.test('it updates state when receiving new props when hydrated is false', function (done) {
+  lab.test('it handles unmounting', function (done) {
 
-        var FormEl = React.createElement(Form, mockProps);
-        var form = TestUtils.renderIntoDocument(FormEl);
+    var container = global.document.createElement('div');
+    var FormEl = React.createElement(Form, mockProps);
 
-        mockProps.data.hydrated = true;
-        form.setProps(mockProps);
+    React.render(FormEl, container);
+    React.unmountComponentAtNode(container);
 
-        mockProps.data.hydrated = true;
-        form.setProps(mockProps);
-
-        Code.expect(form).to.exist();
-        done();
-    });
+    done();
+  });
 
 
-    lab.test('it handles a submit event', function (done) {
+  lab.test('it updates state when receiving new props when hydrated is false', function (done) {
 
-        stub.Actions.saveDetails = function () {
+    var FormEl = React.createElement(Form, mockProps);
+    var form = TestUtils.renderIntoDocument(FormEl);
 
-            done();
-        };
+    mockProps.data.hydrated = true;
+    form.setProps(mockProps);
 
-        var FormEl = React.createElement(Form, mockProps);
-        var form = TestUtils.renderIntoDocument(FormEl);
-        var formTag = TestUtils.findRenderedDOMComponentWithTag(form, 'form');
+    mockProps.data.hydrated = true;
+    form.setProps(mockProps);
 
-        TestUtils.Simulate.submit(formTag.getDOMNode());
-    });
-
-
-    lab.test('it renders with success state', function (done) {
-
-        var FormEl = React.createElement(Form, mockProps);
-        var form = TestUtils.renderIntoDocument(FormEl);
-
-        mockProps.data.hydrated = true;
-        mockProps.data.success = true;
-        form.setProps(mockProps);
-
-        var alerts = TestUtils.scryRenderedDOMComponentsWithClass(form, 'alert-success');
-
-        Code.expect(alerts.length).to.equal(1);
-        done();
-    });
+    Code.expect(form).to.exist();
+    done();
+  });
 
 
-    lab.test('it renders with error state', function (done) {
+  lab.test('it handles a submit event', function (done) {
 
-        var FormEl = React.createElement(Form, mockProps);
-        var form = TestUtils.renderIntoDocument(FormEl);
+    stub.Actions.saveDetails = function () {
 
-        mockProps.data.hydrated = true;
-        mockProps.data.error = 'Whoops.';
-        form.setProps(mockProps);
+      done();
+    };
 
-        var alerts = TestUtils.scryRenderedDOMComponentsWithClass(form, 'alert-danger');
+    var FormEl = React.createElement(Form, mockProps);
+    var form = TestUtils.renderIntoDocument(FormEl);
+    var formTag = TestUtils.findRenderedDOMComponentWithTag(form, 'form');
 
-        Code.expect(alerts.length).to.equal(1);
-        done();
-    });
+    TestUtils.Simulate.submit(formTag.getDOMNode());
+  });
+
+
+  lab.test('it renders with success state', function (done) {
+
+    var FormEl = React.createElement(Form, mockProps);
+    var form = TestUtils.renderIntoDocument(FormEl);
+
+    mockProps.data.hydrated = true;
+    mockProps.data.success = true;
+    form.setProps(mockProps);
+
+    var alerts = TestUtils.scryRenderedDOMComponentsWithClass(form, 'alert-success');
+
+    Code.expect(alerts.length).to.equal(1);
+    done();
+  });
+
+
+  lab.test('it renders with error state', function (done) {
+
+    var FormEl = React.createElement(Form, mockProps);
+    var form = TestUtils.renderIntoDocument(FormEl);
+
+    mockProps.data.hydrated = true;
+    mockProps.data.error = 'Whoops.';
+    form.setProps(mockProps);
+
+    var alerts = TestUtils.scryRenderedDOMComponentsWithClass(form, 'alert-danger');
+
+    Code.expect(alerts.length).to.equal(1);
+    done();
+  });
 });

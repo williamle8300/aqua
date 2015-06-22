@@ -4,5 +4,5 @@ var Del = require('del');
 
 Gulp.task('clean', function (cb) {
 
-    Del('./public', cb);
+  Del('./public', cb);
 });

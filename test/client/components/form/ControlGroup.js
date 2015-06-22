@@ -10,34 +10,34 @@ var TestUtils = React.addons.TestUtils;
 
 lab.experiment('ControlGroup', function () {
 
-    lab.test('it renders normally', function (done) {
+  lab.test('it renders normally', function (done) {
 
-        var props = {
-            children: 'Hi'
-        };
-        var ControlGroupEl = React.createElement(ControlGroup, props);
-        var controlGroup = TestUtils.renderIntoDocument(ControlGroupEl);
+    var props = {
+      children: 'Hi'
+    };
+    var ControlGroupEl = React.createElement(ControlGroup, props);
+    var controlGroup = TestUtils.renderIntoDocument(ControlGroupEl);
 
-        Code.expect(controlGroup.getDOMNode().textContent).to.equal('Hi');
-        done();
-    });
+    Code.expect(controlGroup.getDOMNode().textContent).to.equal('Hi');
+    done();
+  });
 
 
-    lab.test('it renders without label or help elements', function (done) {
+  lab.test('it renders without label or help elements', function (done) {
 
-        var props = {
-            children: 'Hi',
-            hideLabel: true,
-            hideHelp: true
-        };
-        var ControlGroupEl = React.createElement(ControlGroup, props);
-        var controlGroup = TestUtils.renderIntoDocument(ControlGroupEl);
-        var labelEls = TestUtils.scryRenderedDOMComponentsWithTag(controlGroup, 'label');
-        var helpEls = TestUtils.scryRenderedDOMComponentsWithClass(controlGroup, 'help-block');
+    var props = {
+      children: 'Hi',
+      hideLabel: true,
+      hideHelp: true
+    };
+    var ControlGroupEl = React.createElement(ControlGroup, props);
+    var controlGroup = TestUtils.renderIntoDocument(ControlGroupEl);
+    var labelEls = TestUtils.scryRenderedDOMComponentsWithTag(controlGroup, 'label');
+    var helpEls = TestUtils.scryRenderedDOMComponentsWithClass(controlGroup, 'help-block');
 
-        Code.expect(labelEls.length).to.equal(0);
-        Code.expect(helpEls.length).to.equal(0);
+    Code.expect(labelEls.length).to.equal(0);
+    Code.expect(helpEls.length).to.equal(0);
 
-        done();
-    });
+    done();
+  });
 });

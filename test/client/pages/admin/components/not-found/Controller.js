@@ -11,26 +11,26 @@ var TestUtils = React.addons.TestUtils;
 
 lab.experiment('Login Not Found Component', function () {
 
-    lab.test('it renders normally', function (done) {
+  lab.test('it renders normally', function (done) {
 
-        var ComponentWithContext = StubRouterContext(NotFound, {});
-        var NotFoundEl = React.createElement(ComponentWithContext, {});
-        var notFound = TestUtils.renderIntoDocument(NotFoundEl);
+    var ComponentWithContext = StubRouterContext(NotFound, {});
+    var NotFoundEl = React.createElement(ComponentWithContext, {});
+    var notFound = TestUtils.renderIntoDocument(NotFoundEl);
 
-        Code.expect(notFound).to.exist();
-        done();
-    });
+    Code.expect(notFound).to.exist();
+    done();
+  });
 
 
-    lab.test('it handles unmounting', function (done) {
+  lab.test('it handles unmounting', function (done) {
 
-        var container = global.document.createElement('div');
-        var ComponentWithContext = StubRouterContext(NotFound, {});
-        var NotFoundEl = React.createElement(ComponentWithContext, {});
+    var container = global.document.createElement('div');
+    var ComponentWithContext = StubRouterContext(NotFound, {});
+    var NotFoundEl = React.createElement(ComponentWithContext, {});
 
-        React.render(NotFoundEl, container);
-        React.unmountComponentAtNode(container);
+    React.render(NotFoundEl, container);
+    React.unmountComponentAtNode(container);
 
-        done();
-    });
+    done();
+  });
 });

@@ -1,8 +1,8 @@
 ### Contact Form
 
-| Field    | Value       |
+| Field  | Value     |
 | --------:|:----------- |
-| Name:    | {{name}}    |
+| Name:  | {{name}}  |
 | Email:   | {{email}}   |
 | Message: | {{message}} |
 

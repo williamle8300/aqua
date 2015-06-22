@@ -7,133 +7,133 @@ var Proxyquire = require('proxyquire');
 var lab = exports.lab = Lab.script();
 var TestUtils = React.addons.TestUtils;
 var stub = {
-    Actions: {}
+  Actions: {}
 };
 var Form = Proxyquire('../../../../../../client/pages/account/components/settings/PasswordForm', {
-    '../../Actions': stub.Actions
+  '../../Actions': stub.Actions
 });
 var mockStoreState = {};
 
 
 lab.beforeEach(function (done) {
 
-    mockStoreState = {
-        hasError: {},
-        help: {}
-    };
+  mockStoreState = {
+    hasError: {},
+    help: {}
+  };
 
-    done();
+  done();
 });
 
 
 lab.experiment('Account Settings Password Form', function () {
 
-    lab.test('it renders normally', function (done) {
+  lab.test('it renders normally', function (done) {
 
-        var FormEl = React.createElement(Form, {
-            data: mockStoreState
-        });
-        var form = TestUtils.renderIntoDocument(FormEl);
+    var FormEl = React.createElement(Form, {
+      data: mockStoreState
+    });
+    var form = TestUtils.renderIntoDocument(FormEl);
 
-        Code.expect(form).to.exist();
-        done();
+    Code.expect(form).to.exist();
+    done();
+  });
+
+
+  lab.test('it handles unmounting', function (done) {
+
+    var container = global.document.createElement('div');
+    var FormEl = React.createElement(Form, {
+      data: mockStoreState
     });
 
+    React.render(FormEl, container);
+    React.unmountComponentAtNode(container);
 
-    lab.test('it handles unmounting', function (done) {
+    done();
+  });
 
-        var container = global.document.createElement('div');
-        var FormEl = React.createElement(Form, {
-            data: mockStoreState
-        });
 
-        React.render(FormEl, container);
-        React.unmountComponentAtNode(container);
+  lab.test('it handles receiving props with and without the store having success', function (done) {
 
-        done();
+    var FormEl = React.createElement(Form, {
+      data: mockStoreState
+    });
+    var form = TestUtils.renderIntoDocument(FormEl);
+
+    form.setProps({
+      data: mockStoreState
     });
 
+    mockStoreState.success = true;
 
-    lab.test('it handles receiving props with and without the store having success', function (done) {
-
-        var FormEl = React.createElement(Form, {
-            data: mockStoreState
-        });
-        var form = TestUtils.renderIntoDocument(FormEl);
-
-        form.setProps({
-            data: mockStoreState
-        });
-
-        mockStoreState.success = true;
-
-        form.setProps({
-            data: mockStoreState
-        });
-
-        Code.expect(form).to.exist();
-        done();
+    form.setProps({
+      data: mockStoreState
     });
 
+    Code.expect(form).to.exist();
+    done();
+  });
 
-    lab.test('it handles a submit event', function (done) {
 
-        stub.Actions.savePasswordSettings = function () {
+  lab.test('it handles a submit event', function (done) {
 
-            done();
-        };
+    stub.Actions.savePasswordSettings = function () {
 
-        var FormEl = React.createElement(Form, {
-            data: mockStoreState
-        });
-        var form = TestUtils.renderIntoDocument(FormEl);
-        var formTag = TestUtils.findRenderedDOMComponentWithTag(form, 'form');
+      done();
+    };
 
-        TestUtils.Simulate.submit(formTag.getDOMNode());
+    var FormEl = React.createElement(Form, {
+      data: mockStoreState
     });
+    var form = TestUtils.renderIntoDocument(FormEl);
+    var formTag = TestUtils.findRenderedDOMComponentWithTag(form, 'form');
+
+    TestUtils.Simulate.submit(formTag.getDOMNode());
+  });
 
 
-    lab.test('it renders with loading state', function (done) {
+  lab.test('it renders with loading state', function (done) {
 
-        mockStoreState.loading = true;
+    mockStoreState.loading = true;
 
-        var FormEl = React.createElement(Form, {
-            data: mockStoreState
-        });
-        var form = TestUtils.renderIntoDocument(FormEl);
-        var button = TestUtils.findRenderedDOMComponentWithTag(form, 'button');
-
-        Code.expect(button.getDOMNode().disabled).to.be.true();
-        done();
+    var FormEl = React.createElement(Form, {
+      data: mockStoreState
     });
+    var form = TestUtils.renderIntoDocument(FormEl);
+    var button = TestUtils.findRenderedDOMComponentWithTag(form, 'button');
+
+    Code.expect(button.getDOMNode().disabled).to.be.true();
+    done();
+  });
 
 
-    lab.test('it renders with success state', function (done) {
+  lab.test('it renders with success state', function (done) {
 
-        mockStoreState.success = true;
+    mockStoreState.success = true;
 
-        var FormEl = React.createElement(Form, {
-            data: mockStoreState
-        });
-        var form = TestUtils.renderIntoDocument(FormEl);
-        var alerts = TestUtils.scryRenderedDOMComponentsWithClass(form, 'alert-success');
-
-        Code.expect(alerts.length).to.equal(1);
-        done();
+    var FormEl = React.createElement(Form, {
+      data: mockStoreState
     });
+    var form = TestUtils.renderIntoDocument(FormEl);
+    var alerts = TestUtils.scryRenderedDOMComponentsWithClass(form, 'alert-success');
+
+    Code.expect(alerts.length).to.equal(1);
+    done();
+  });
 
 
-    lab.test('it renders with error state', function (done) {
+  lab.test('it renders with error state', function (done) {
 
-        mockStoreState.error = 'an error occurred and stuff';
+    mockStoreState.error = 'an error occurred and stuff';
 
-        var FormEl = React.createElement(Form, {
-            data: mockStoreState
-        });
-        var form = TestUtils.renderIntoDocument(FormEl);
-        var alerts = TestUtils.scryRenderedDOMComponentsWithClass(form, 'alert-danger');
-
-        Code.expect(alerts.length).to.equal(1);
-        done();
+    var FormEl = React.createElement(Form, {
+      data: mockStoreState
     });
+    var form = TestUtils.renderIntoDocument(FormEl);
+    var alerts = TestUtils.scryRenderedDOMComponentsWithClass(form, 'alert-danger');
+
+    Code.expect(alerts.length).to.equal(1);
+    done();
+  });
 });

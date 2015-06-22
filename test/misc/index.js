@@ -8,12 +8,12 @@ var lab = exports.lab = Lab.script();
 
 lab.experiment('App', function () {
 
-    lab.test('it composes a server', function (done) {
+  lab.test('it composes a server', function (done) {
 
-        Composer(function (err, composedServer) {
+    Composer(function (err, composedServer) {
 
-            Code.expect(composedServer).to.be.an.object();
-            done(err);
-        });
+      Code.expect(composedServer).to.be.an.object();
+      done(err);
     });
+  });
 });

@@ -10,31 +10,31 @@ var mountNode;
 
 lab.before(function (done) {
 
-    mountNode = global.document.createElement('div');
-    mountNode.id = 'app-mount';
-    global.document.body.appendChild(mountNode);
+  mountNode = global.document.createElement('div');
+  mountNode.id = 'app-mount';
+  global.document.body.appendChild(mountNode);
 
-    done();
+  done();
 });
 
 
 lab.after(function (done) {
 
-    React.unmountComponentAtNode(mountNode);
-    global.document.body.removeChild(mountNode);
-    delete global.window.app;
+  React.unmountComponentAtNode(mountNode);
+  global.document.body.removeChild(mountNode);
+  delete global.window.app;
 
-    done();
+  done();
 });
 
 
 lab.experiment('Contact App', function () {
 
-    lab.test('it renders normally', function (done) {
+  lab.test('it renders normally', function (done) {
 
-        App.blastoff();
+    App.blastoff();
 
-        Code.expect(App.mainElement).to.be.an.object();
-        done();
-    });
+    Code.expect(App.mainElement).to.be.an.object();
+    done();
+  });
 });

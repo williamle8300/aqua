@@ -11,26 +11,26 @@ var dispatch = Dispatcher.handleAction;
 
 
 var Actions = {
-    sendRequest: function (data) {
+  sendRequest: function (data) {
 
-        dispatch(VIEW_ACTION, Types.SEND_REQUEST, data);
+    dispatch(VIEW_ACTION, Types.SEND_REQUEST, data);
 
-        var request = {
-            method: 'POST',
-            url: '/api/signup',
-            data: data
-        };
+    var request = {
+      method: 'POST',
+      url: '/api/signup',
+      data: data
+    };
 
-        Fetch(request, function (err, response) {
+    Fetch(request, function (err, response) {
 
-            if (!err) {
-                window.location.href = '/account';
-                response.success = true;
-            }
+      if (!err) {
+        window.location.href = '/account';
+        response.success = true;
+      }
 
-            dispatch(SERVER_ACTION, Types.RECEIVE_RESPONSE, response);
-        });
-    }
+      dispatch(SERVER_ACTION, Types.RECEIVE_RESPONSE, response);
+    });
+  }
 };
 
 

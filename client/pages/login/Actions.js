@@ -12,99 +12,99 @@ var dispatch = Dispatcher.handleAction;
 
 
 var Actions = {
-    forgot: function (data) {
+  forgot: function (data) {
 
-        dispatch(VIEW_ACTION, Types.FORGOT, data);
+    dispatch(VIEW_ACTION, Types.FORGOT, data);
 
-        var request = {
-            method: 'POST',
-            url: '/api/login/forgot',
-            data: data
-        };
+    var request = {
+      method: 'POST',
+      url: '/api/login/forgot',
+      data: data
+    };
 
-        Fetch(request, function (err, response) {
+    Fetch(request, function (err, response) {
 
-            if (!err) {
-                response.success = true;
-            }
+      if (!err) {
+        response.success = true;
+      }
 
-            dispatch(SERVER_ACTION, Types.FORGOT_RESPONSE, response);
-        });
-    },
-    login: function (data) {
+      dispatch(SERVER_ACTION, Types.FORGOT_RESPONSE, response);
+    });
+  },
+  login: function (data) {
 
-        dispatch(VIEW_ACTION, Types.LOGIN, data);
+    dispatch(VIEW_ACTION, Types.LOGIN, data);
 
-        var request = {
-            method: 'POST',
-            url: '/api/login',
-            data: data
-        };
+    var request = {
+      method: 'POST',
+      url: '/api/login',
+      data: data
+    };
 
-        Fetch(request, function (err, response) {
+    Fetch(request, function (err, response) {
 
-            if (!err) {
-                var returnUrl = window.localStorage.getItem('returnUrl');
+      if (!err) {
+        var returnUrl = window.localStorage.getItem('returnUrl');
 
-                if (returnUrl) {
-                    RedirectActions.clearReturnUrl();
-                    window.location.href = returnUrl;
-                }
-                else if (response.user.roles.admin) {
-                    window.location.href = '/admin';
-                }
-                else {
-                    window.location.href = '/account';
-                }
+        if (returnUrl) {
+          RedirectActions.clearReturnUrl();
+          window.location.href = returnUrl;
+        }
+        else if (response.user.roles.admin) {
+          window.location.href = '/admin';
+        }
+        else {
+          window.location.href = '/account';
+        }
 
-                response.success = true;
-            }
+        response.success = true;
+      }
 
-            dispatch(SERVER_ACTION, Types.LOGIN_RESPONSE, response);
-        });
-    },
-    logout: function (data) {
+      dispatch(SERVER_ACTION, Types.LOGIN_RESPONSE, response);
+    });
+  },
+  logout: function (data) {
 
-        dispatch(VIEW_ACTION, Types.LOGOUT, data);
+    dispatch(VIEW_ACTION, Types.LOGOUT, data);
 
-        var request = {
-            method: 'DELETE',
-            url: '/api/logout',
-            data: data,
-            useAuth: true
-        };
+    var request = {
+      method: 'DELETE',
+      url: '/api/logout',
+      data: data,
+      useAuth: true
+    };
 
-        Fetch(request, function (err, response) {
+    Fetch(request, function (err, response) {
 
-            if (!err) {
-                response.success = true;
-            }
-            else {
-                response.error = err.message;
-            }
+      if (!err) {
+        response.success = true;
+      }
+      else {
+        response.error = err.message;
+      }
 
-            dispatch(SERVER_ACTION, Types.LOGOUT_RESPONSE, response);
-        });
-    },
-    reset: function (data) {
+      dispatch(SERVER_ACTION, Types.LOGOUT_RESPONSE, response);
+    });
+  },
+  reset: function (data) {
 
-        dispatch(VIEW_ACTION, Types.RESET, data);
+    dispatch(VIEW_ACTION, Types.RESET, data);
 
-        var request = {
-            method: 'POST',
-            url: '/api/login/reset',
-            data: data
-        };
+    var request = {
+      method: 'POST',
+      url: '/api/login/reset',
+      data: data
+    };
 
-        Fetch(request, function (err, response) {
+    Fetch(request, function (err, response) {
 
-            if (!err) {
-                response.success = true;
-            }
+      if (!err) {
+        response.success = true;
+      }
 
-            dispatch(SERVER_ACTION, Types.RESET_RESPONSE, response);
-        });
-    }
+      dispatch(SERVER_ACTION, Types.RESET_RESPONSE, response);
+    });
+  }
 };
 
 

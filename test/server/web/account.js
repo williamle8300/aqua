@@ -13,55 +13,55 @@ var AuthenticatedAccount = require('../fixtures/credentials-account');
 var lab = exports.lab = Lab.script();
 var request, server;
 var ModelsPlugin = {
-    register: require('hapi-mongo-models'),
-    options: Manifest.get('/plugins')['hapi-mongo-models']
+  register: require('hapi-mongo-models'),
+  options: Manifest.get('/plugins')['hapi-mongo-models']
 };
 
 
 lab.beforeEach(function (done) {
 
-    var plugins = [ HapiAuth, ModelsPlugin, AuthPlugin, AccountPlugin ];
-    server = new Hapi.Server();
-    server.connection({ port: Config.get('/port/web') });
-    server.views({
-        engines: { jsx: require('hapi-react-views') },
-        path: './server/web',
-        relativeTo: Path.join(__dirname, '..', '..', '..')
-    });
-    server.register(plugins, function (err) {
+  var plugins = [ HapiAuth, ModelsPlugin, AuthPlugin, AccountPlugin ];
+  server = new Hapi.Server();
+  server.connection({ port: Config.get('/port/web') });
+  server.views({
+    engines: { jsx: require('hapi-react-views') },
+    path: './server/web',
+    relativeTo: Path.join(__dirname, '..', '..', '..')
+  });
+  server.register(plugins, function (err) {
 
-        if (err) {
-            return done(err);
-        }
+    if (err) {
+      return done(err);
+    }
 
-        done();
-    });
+    done();
+  });
 });
 
 
 lab.experiment('Account Page View', function () {
 
-    lab.beforeEach(function (done) {
+  lab.beforeEach(function (done) {
 
-        request = {
-            method: 'GET',
-            url: '/account',
-            credentials: AuthenticatedAccount
-        };
+    request = {
+      method: 'GET',
+      url: '/account',
+      credentials: AuthenticatedAccount
+    };
 
-        done();
+    done();
+  });
+
+
+
+  lab.test('Account page renders properly', function (done) {
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.result).to.match(/Account/i);
+      Code.expect(response.statusCode).to.equal(200);
+
+      done();
     });
-
-
-
-    lab.test('Account page renders properly', function (done) {
-
-        server.inject(request, function (response) {
-
-            Code.expect(response.result).to.match(/Account/i);
-            Code.expect(response.statusCode).to.equal(200);
-
-            done();
-        });
-    });
+  });
 });

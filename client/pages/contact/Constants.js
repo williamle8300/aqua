@@ -3,9 +3,9 @@ var PayloadSources = require('../../constants/PayloadSources');
 
 
 module.exports = {
-    PayloadSources: PayloadSources,
-    ActionTypes: FluxConstant.set([
-        'SEND_MESSAGE',
-        'SEND_MESSAGE_RESPONSE'
-    ])
+  PayloadSources: PayloadSources,
+  ActionTypes: FluxConstant.set([
+    'SEND_MESSAGE',
+    'SEND_MESSAGE_RESPONSE'
+  ])
 };

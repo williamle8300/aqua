@@ -10,25 +10,25 @@ var dispatch = Dispatcher.handleAction;
 
 
 var Actions = {
-    sendMessage: function (data) {
+  sendMessage: function (data) {
 
-        dispatch(VIEW_ACTION, ActionTypes.SEND_MESSAGE, data);
+    dispatch(VIEW_ACTION, ActionTypes.SEND_MESSAGE, data);
 
-        var request = {
-            method: 'POST',
-            url: '/api/contact',
-            data: data
-        };
+    var request = {
+      method: 'POST',
+      url: '/api/contact',
+      data: data
+    };
 
-        Fetch(request, function (err, response) {
+    Fetch(request, function (err, response) {
 
-            if (!err) {
-                response.success = true;
-            }
+      if (!err) {
+        response.success = true;
+      }
 
-            dispatch(SERVER_ACTION, ActionTypes.SEND_MESSAGE_RESPONSE, response);
-        });
-    }
+      dispatch(SERVER_ACTION, ActionTypes.SEND_MESSAGE_RESPONSE, response);
+    });
+  }
 };
 
 

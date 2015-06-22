@@ -10,12 +10,12 @@ var TestUtils = React.addons.TestUtils;
 
 lab.experiment('Account Footer', function () {
 
-    lab.test('it renders normally', function (done) {
+  lab.test('it renders normally', function (done) {
 
-        var FooterEl = React.createElement(Footer, {});
-        var footer = TestUtils.renderIntoDocument(FooterEl);
+    var FooterEl = React.createElement(Footer, {});
+    var footer = TestUtils.renderIntoDocument(FooterEl);
 
-        Code.expect(footer).to.exist();
-        done();
-    });
+    Code.expect(footer).to.exist();
+    done();
+  });
 });

@@ -19,472 +19,472 @@ var ModelsPlugin, server, stub;
 
 lab.beforeEach(function (done) {
 
-    stub = {
-        Session: {},
-        User: {}
-    };
+  stub = {
+    Session: {},
+    User: {}
+  };
 
-    var proxy = {};
-    proxy[Path.join(process.cwd(), './server/models/session')] = stub.Session;
-    proxy[Path.join(process.cwd(), './server/models/user')] = stub.User;
+  var proxy = {};
+  proxy[Path.join(process.cwd(), './server/models/session')] = stub.Session;
+  proxy[Path.join(process.cwd(), './server/models/user')] = stub.User;
 
-    ModelsPlugin = {
-        register: Proxyquire('hapi-mongo-models', proxy),
-        options: Manifest.get('/plugins')['hapi-mongo-models']
-    };
+  ModelsPlugin = {
+    register: Proxyquire('hapi-mongo-models', proxy),
+    options: Manifest.get('/plugins')['hapi-mongo-models']
+  };
 
-    var plugins = [ HapiAuth, ModelsPlugin, AuthPlugin ];
-    server = new Hapi.Server();
-    server.connection({ port: Config.get('/port/web') });
-    server.register(plugins, function (err) {
+  var plugins = [ HapiAuth, ModelsPlugin, AuthPlugin ];
+  server = new Hapi.Server();
+  server.connection({ port: Config.get('/port/web') });
+  server.register(plugins, function (err) {
 
-        if (err) {
-            return done(err);
-        }
+    if (err) {
+      return done(err);
+    }
 
-        done();
-    });
+    done();
+  });
 });
 
 
 lab.afterEach(function (done) {
 
-    server.plugins['hapi-mongo-models'].BaseModel.disconnect();
+  server.plugins['hapi-mongo-models'].BaseModel.disconnect();
 
-    done();
+  done();
 });
 
 
 lab.experiment('Auth Plugin', function () {
 
-    lab.test('it returns authentication credentials', function (done) {
+  lab.test('it returns authentication credentials', function (done) {
 
-        stub.Session.findByCredentials = function (id, key, callback) {
+    stub.Session.findByCredentials = function (id, key, callback) {
 
-            callback(null, new Session({ _id: '2D', userId: '1D', key: 'baddog' }));
-        };
+      callback(null, new Session({ _id: '2D', userId: '1D', key: 'baddog' }));
+    };
 
-        stub.User.findById = function (id, callback) {
+    stub.User.findById = function (id, callback) {
 
-            callback(null, new User({ _id: '1D', username: 'ren' }));
-        };
+      callback(null, new User({ _id: '1D', username: 'ren' }));
+    };
 
-        server.route({
-            method: 'GET',
-            path: '/',
-            config: {
-                plugins: {
-                    'hapi-auth-cookie': {
-                        redirectTo: false
-                    }
-                }
-            },
-            handler: function (request, reply) {
+    server.route({
+      method: 'GET',
+      path: '/',
+      config: {
+        plugins: {
+          'hapi-auth-cookie': {
+            redirectTo: false
+          }
+        }
+      },
+      handler: function (request, reply) {
 
-                server.auth.test('session', request, function (err, credentials) {
+        server.auth.test('session', request, function (err, credentials) {
 
-                    Code.expect(err).to.not.exist();
-                    Code.expect(credentials).to.be.an.object();
-                    reply('ok');
-                });
-            }
+          Code.expect(err).to.not.exist();
+          Code.expect(credentials).to.be.an.object();
+          reply('ok');
         });
-
-        var request = {
-            method: 'GET',
-            url: '/',
-            headers: {
-                cookie: CookieAdmin
-            }
-        };
-
-        server.inject(request, function (response) {
-
-            done();
-        });
+      }
     });
 
+    var request = {
+      method: 'GET',
+      url: '/',
+      headers: {
+        cookie: CookieAdmin
+      }
+    };
 
-    lab.test('it returns an error when the session is not found', function (done) {
+    server.inject(request, function (response) {
 
-        stub.Session.findByCredentials = function (username, key, callback) {
+      done();
+    });
+  });
 
-            callback();
-        };
 
-        server.route({
-            method: 'GET',
-            path: '/',
-            config: {
-                plugins: {
-                    'hapi-auth-cookie': {
-                        redirectTo: false
-                    }
-                }
-            },
-            handler: function (request, reply) {
+  lab.test('it returns an error when the session is not found', function (done) {
 
-                server.auth.test('session', request, function (err, credentials) {
+    stub.Session.findByCredentials = function (username, key, callback) {
 
-                    Code.expect(err).to.be.an.object();
-                    reply('ok');
-                });
-            }
+      callback();
+    };
+
+    server.route({
+      method: 'GET',
+      path: '/',
+      config: {
+        plugins: {
+          'hapi-auth-cookie': {
+            redirectTo: false
+          }
+        }
+      },
+      handler: function (request, reply) {
+
+        server.auth.test('session', request, function (err, credentials) {
+
+          Code.expect(err).to.be.an.object();
+          reply('ok');
         });
-
-        var request = {
-            method: 'GET',
-            url: '/',
-            headers: {
-                cookie: CookieAdmin
-            }
-        };
-
-        server.inject(request, function (response) {
-
-            done();
-        });
+      }
     });
 
+    var request = {
+      method: 'GET',
+      url: '/',
+      headers: {
+        cookie: CookieAdmin
+      }
+    };
 
-    lab.test('it returns an error when the user is not found', function (done) {
+    server.inject(request, function (response) {
 
-        stub.Session.findByCredentials = function (username, key, callback) {
+      done();
+    });
+  });
 
-            callback(null, new Session({ username: 'ren', key: 'baddog' }));
-        };
 
-        stub.User.findByUsername = function (username, callback) {
+  lab.test('it returns an error when the user is not found', function (done) {
 
-            callback();
-        };
+    stub.Session.findByCredentials = function (username, key, callback) {
 
-        server.route({
-            method: 'GET',
-            path: '/',
-            config: {
-                plugins: {
-                    'hapi-auth-cookie': {
-                        redirectTo: false
-                    }
-                }
-            },
-            handler: function (request, reply) {
+      callback(null, new Session({ username: 'ren', key: 'baddog' }));
+    };
 
-                server.auth.test('session', request, function (err, credentials) {
+    stub.User.findByUsername = function (username, callback) {
 
-                    Code.expect(err).to.be.an.object();
-                    reply('ok');
-                });
-            }
+      callback();
+    };
+
+    server.route({
+      method: 'GET',
+      path: '/',
+      config: {
+        plugins: {
+          'hapi-auth-cookie': {
+            redirectTo: false
+          }
+        }
+      },
+      handler: function (request, reply) {
+
+        server.auth.test('session', request, function (err, credentials) {
+
+          Code.expect(err).to.be.an.object();
+          reply('ok');
         });
-
-        var request = {
-            method: 'GET',
-            url: '/',
-            headers: {
-                cookie: CookieAdmin
-            }
-        };
-
-        server.inject(request, function (response) {
-
-            done();
-        });
+      }
     });
 
+    var request = {
+      method: 'GET',
+      url: '/',
+      headers: {
+        cookie: CookieAdmin
+      }
+    };
 
-    lab.test('it returns an error when a model error occurs', function (done) {
+    server.inject(request, function (response) {
 
-        stub.Session.findByCredentials = function (username, key, callback) {
+      done();
+    });
+  });
 
-            callback(Error('session fail'));
-        };
 
-        server.route({
-            method: 'GET',
-            path: '/',
-            config: {
-                plugins: {
-                    'hapi-auth-cookie': {
-                        redirectTo: false
-                    }
-                }
-            },
-            handler: function (request, reply) {
+  lab.test('it returns an error when a model error occurs', function (done) {
 
-                server.auth.test('session', request, function (err, credentials) {
+    stub.Session.findByCredentials = function (username, key, callback) {
 
-                    Code.expect(err).to.be.an.object();
-                    reply('ok');
-                });
-            }
+      callback(Error('session fail'));
+    };
+
+    server.route({
+      method: 'GET',
+      path: '/',
+      config: {
+        plugins: {
+          'hapi-auth-cookie': {
+            redirectTo: false
+          }
+        }
+      },
+      handler: function (request, reply) {
+
+        server.auth.test('session', request, function (err, credentials) {
+
+          Code.expect(err).to.be.an.object();
+          reply('ok');
         });
-
-        var request = {
-            method: 'GET',
-            url: '/',
-            headers: {
-                cookie: CookieAdmin
-            }
-        };
-
-        server.inject(request, function (response) {
-
-            done();
-        });
+      }
     });
 
+    var request = {
+      method: 'GET',
+      url: '/',
+      headers: {
+        cookie: CookieAdmin
+      }
+    };
 
-    lab.test('it takes over when the required role is missing', function (done) {
+    server.inject(request, function (response) {
 
-        stub.Session.findByCredentials = function (id, key, callback) {
+      done();
+    });
+  });
 
-            callback(null, new Session({ _id: '2D', userId: '1D', key: 'baddog' }));
-        };
 
-        stub.User.findById = function (id, callback) {
+  lab.test('it takes over when the required role is missing', function (done) {
 
-            callback(null, new User({ _id: '1D', username: 'ren' }));
-        };
+    stub.Session.findByCredentials = function (id, key, callback) {
 
-        server.route({
-            method: 'GET',
-            path: '/',
-            config: {
-                auth: {
-                    strategy: 'session',
-                    scope: 'admin'
-                }
-            },
-            handler: function (request, reply) {
+      callback(null, new Session({ _id: '2D', userId: '1D', key: 'baddog' }));
+    };
 
-                Code.expect(request.auth.credentials).to.be.an.object();
+    stub.User.findById = function (id, callback) {
 
-                reply('ok');
-            }
-        });
+      callback(null, new User({ _id: '1D', username: 'ren' }));
+    };
 
-        var request = {
-            method: 'GET',
-            url: '/',
-            headers: {
-                cookie: CookieAdmin
-            }
-        };
+    server.route({
+      method: 'GET',
+      path: '/',
+      config: {
+        auth: {
+          strategy: 'session',
+          scope: 'admin'
+        }
+      },
+      handler: function (request, reply) {
 
-        server.inject(request, function (response) {
+        Code.expect(request.auth.credentials).to.be.an.object();
 
-            Code.expect(response.result.message).to.match(/insufficient scope/i);
-
-            done();
-        });
+        reply('ok');
+      }
     });
 
+    var request = {
+      method: 'GET',
+      url: '/',
+      headers: {
+        cookie: CookieAdmin
+      }
+    };
 
-    lab.test('it continues through pre handler when role is present', function (done) {
+    server.inject(request, function (response) {
 
-        stub.Session.findByCredentials = function (username, key, callback) {
+      Code.expect(response.result.message).to.match(/insufficient scope/i);
 
-            callback(null, new Session({ _id: '2D', userId: '1D', key: 'baddog' }));
-        };
+      done();
+    });
+  });
 
-        stub.User.findById = function (id, callback) {
 
-            var user = new User({
-                username: 'ren',
-                roles: {
-                    admin: {
-                        id: '953P150D35',
-                        name: 'Ren Höek'
-                    }
-                }
-            });
+  lab.test('it continues through pre handler when role is present', function (done) {
 
-            user._roles = {
-                admin: {
-                    _id: '953P150D35',
-                    name: {
-                        first: 'Ren',
-                        last: 'Höek'
-                    }
-                }
-            };
+    stub.Session.findByCredentials = function (username, key, callback) {
 
-            callback(null, user);
-        };
+      callback(null, new Session({ _id: '2D', userId: '1D', key: 'baddog' }));
+    };
 
-        server.route({
-            method: 'GET',
-            path: '/',
-            config: {
-                auth: {
-                    strategy: 'session',
-                    scope: ['account', 'admin']
-                }
-            },
-            handler: function (request, reply) {
+    stub.User.findById = function (id, callback) {
 
-                Code.expect(request.auth.credentials).to.be.an.object();
+      var user = new User({
+        username: 'ren',
+        roles: {
+          admin: {
+            id: '953P150D35',
+            name: 'Ren Höek'
+          }
+        }
+      });
 
-                reply('ok');
-            }
-        });
+      user._roles = {
+        admin: {
+          _id: '953P150D35',
+          name: {
+            first: 'Ren',
+            last: 'Höek'
+          }
+        }
+      };
 
-        var request = {
-            method: 'GET',
-            url: '/',
-            headers: {
-                cookie: CookieAdmin
-            }
-        };
+      callback(null, user);
+    };
 
-        server.inject(request, function (response) {
+    server.route({
+      method: 'GET',
+      path: '/',
+      config: {
+        auth: {
+          strategy: 'session',
+          scope: ['account', 'admin']
+        }
+      },
+      handler: function (request, reply) {
 
-            Code.expect(response.result).to.match(/ok/i);
+        Code.expect(request.auth.credentials).to.be.an.object();
 
-            done();
-        });
+        reply('ok');
+      }
     });
 
+    var request = {
+      method: 'GET',
+      url: '/',
+      headers: {
+        cookie: CookieAdmin
+      }
+    };
 
-    lab.test('it takes over when the required group is missing', function (done) {
+    server.inject(request, function (response) {
 
-        stub.Session.findByCredentials = function (username, key, callback) {
+      Code.expect(response.result).to.match(/ok/i);
 
-            callback(null, new Session({ _id: '2D', userId: '1D', key: 'baddog' }));
-        };
+      done();
+    });
+  });
 
-        stub.User.findById = function (id, callback) {
 
-            var user = new User({
-                username: 'ren',
-                roles: {
-                    admin: {
-                        id: '953P150D35',
-                        name: 'Ren Höek'
-                    }
-                }
-            });
+  lab.test('it takes over when the required group is missing', function (done) {
 
-            user._roles = {
-                admin: new Admin({
-                    _id: '953P150D35',
-                    name: {
-                        first: 'Ren',
-                        last: 'Höek'
-                    }
-                })
-            };
+    stub.Session.findByCredentials = function (username, key, callback) {
 
-            callback(null, user);
-        };
+      callback(null, new Session({ _id: '2D', userId: '1D', key: 'baddog' }));
+    };
 
-        server.route({
-            method: 'GET',
-            path: '/',
-            config: {
-                auth: {
-                    strategy: 'session',
-                    scope: 'admin'
-                },
-                pre: [
-                    AuthPlugin.preware.ensureAdminGroup('root')
-                ]
-            },
-            handler: function (request, reply) {
+    stub.User.findById = function (id, callback) {
 
-                Code.expect(request.auth.credentials).to.be.an.object();
+      var user = new User({
+        username: 'ren',
+        roles: {
+          admin: {
+            id: '953P150D35',
+            name: 'Ren Höek'
+          }
+        }
+      });
 
-                reply('ok');
-            }
-        });
+      user._roles = {
+        admin: new Admin({
+          _id: '953P150D35',
+          name: {
+            first: 'Ren',
+            last: 'Höek'
+          }
+        })
+      };
 
-        var request = {
-            method: 'GET',
-            url: '/',
-            headers: {
-                cookie: CookieAdmin
-            }
-        };
+      callback(null, user);
+    };
 
-        server.inject(request, function (response) {
+    server.route({
+      method: 'GET',
+      path: '/',
+      config: {
+        auth: {
+          strategy: 'session',
+          scope: 'admin'
+        },
+        pre: [
+          AuthPlugin.preware.ensureAdminGroup('root')
+        ]
+      },
+      handler: function (request, reply) {
 
-            Code.expect(response.result.message).to.match(/permission denied/i);
+        Code.expect(request.auth.credentials).to.be.an.object();
 
-            done();
-        });
+        reply('ok');
+      }
     });
 
+    var request = {
+      method: 'GET',
+      url: '/',
+      headers: {
+        cookie: CookieAdmin
+      }
+    };
 
-    lab.test('it continues through pre handler when group is present', function (done) {
+    server.inject(request, function (response) {
 
-        stub.Session.findByCredentials = function (username, key, callback) {
+      Code.expect(response.result.message).to.match(/permission denied/i);
 
-            callback(null, new Session({ _id: '2D', userId: '1D', key: 'baddog' }));
-        };
-
-        stub.User.findById = function (id, callback) {
-
-            var user = new User({
-                username: 'ren',
-                roles: {
-                    admin: {
-                        id: '953P150D35',
-                        name: 'Ren Höek'
-                    }
-                }
-            });
-
-            user._roles = {
-                admin: new Admin({
-                    _id: '953P150D35',
-                    name: {
-                        first: 'Ren',
-                        last: 'Höek'
-                    },
-                    groups: {
-                        root: 'Root'
-                    }
-                })
-            };
-
-            callback(null, user);
-        };
-
-        server.route({
-            method: 'GET',
-            path: '/',
-            config: {
-                auth: {
-                    strategy: 'session',
-                    scope: 'admin'
-                },
-                pre: [
-                    AuthPlugin.preware.ensureAdminGroup(['sales', 'root'])
-                ]
-            },
-            handler: function (request, reply) {
-
-                Code.expect(request.auth.credentials).to.be.an.object();
-
-                reply('ok');
-            }
-        });
-
-        var request = {
-            method: 'GET',
-            url: '/',
-            headers: {
-                cookie: CookieAdmin
-            }
-        };
-
-        server.inject(request, function (response) {
-
-            Code.expect(response.result).to.match(/ok/i);
-
-            done();
-        });
+      done();
     });
+  });
+
+
+  lab.test('it continues through pre handler when group is present', function (done) {
+
+    stub.Session.findByCredentials = function (username, key, callback) {
+
+      callback(null, new Session({ _id: '2D', userId: '1D', key: 'baddog' }));
+    };
+
+    stub.User.findById = function (id, callback) {
+
+      var user = new User({
+        username: 'ren',
+        roles: {
+          admin: {
+            id: '953P150D35',
+            name: 'Ren Höek'
+          }
+        }
+      });
+
+      user._roles = {
+        admin: new Admin({
+          _id: '953P150D35',
+          name: {
+            first: 'Ren',
+            last: 'Höek'
+          },
+          groups: {
+            root: 'Root'
+          }
+        })
+      };
+
+      callback(null, user);
+    };
+
+    server.route({
+      method: 'GET',
+      path: '/',
+      config: {
+        auth: {
+          strategy: 'session',
+          scope: 'admin'
+        },
+        pre: [
+          AuthPlugin.preware.ensureAdminGroup(['sales', 'root'])
+        ]
+      },
+      handler: function (request, reply) {
+
+        Code.expect(request.auth.credentials).to.be.an.object();
+
+        reply('ok');
+      }
+    });
+
+    var request = {
+      method: 'GET',
+      url: '/',
+      headers: {
+        cookie: CookieAdmin
+      }
+    };
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.result).to.match(/ok/i);
+
+      done();
+    });
+  });
 });

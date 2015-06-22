@@ -22,9 +22,9 @@ Router](https://github.com/rackt/react-router). We're using
 
 ## Live demo
 
-| url                                                              | username | password |
+| url                                | username | password |
 |:---------------------------------------------------------------- |:-------- |:-------- |
-| [https://getaqua.herokuapp.com/](https://getaqua.herokuapp.com/) | root     | root     |
+| [https://getaqua.herokuapp.com/](https://getaqua.herokuapp.com/) | root   | root   |
 
 __Note:__ The live demo has been modified so you cannot change the root user,
 the root user's linked admin role or the root admin group. This was done in

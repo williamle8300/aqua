@@ -8,9 +8,9 @@ var lab = exports.lab = Lab.script();
 
 lab.experiment('Admin Account Constants', function () {
 
-    lab.test('it loads', function (done) {
+  lab.test('it loads', function (done) {
 
-        Code.expect(Constants).to.exist();
-        done();
-    });
+    Code.expect(Constants).to.exist();
+    done();
+  });
 });

@@ -8,131 +8,131 @@ var StubRouterContext = require('../../../../fixtures/StubRouterContext');
 var lab = exports.lab = Lab.script();
 var TestUtils = React.addons.TestUtils;
 var stub = {
-    Actions: {}
+  Actions: {}
 };
 var Form = Proxyquire('../../../../../../client/pages/admin/components/admins/CreateNewForm', {
-    '../../actions/Admin': stub.Actions
+  '../../actions/Admin': stub.Actions
 });
 var mockProps;
 
 
 lab.beforeEach(function (done) {
 
-    mockProps = {
-        data: {
-            hasError: {},
-            help: {}
-        }
-    };
+  mockProps = {
+    data: {
+      hasError: {},
+      help: {}
+    }
+  };
 
-    done();
+  done();
 });
 
 
 lab.experiment('Admin Admin Create New Form', function () {
 
-    lab.test('it renders normally', function (done) {
+  lab.test('it renders normally', function (done) {
 
-        var FormWithContext = StubRouterContext(Form, {});
-        var FormEl = React.createElement(FormWithContext, mockProps);
-        var form = TestUtils.renderIntoDocument(FormEl);
+    var FormWithContext = StubRouterContext(Form, {});
+    var FormEl = React.createElement(FormWithContext, mockProps);
+    var form = TestUtils.renderIntoDocument(FormEl);
 
-        Code.expect(form).to.exist();
-        done();
-    });
-
-
-    lab.test('it handles unmounting', function (done) {
-
-        var container = global.document.createElement('div');
-        var FormWithContext = StubRouterContext(Form, {});
-        var FormEl = React.createElement(FormWithContext, mockProps);
-
-        React.render(FormEl, container);
-        React.unmountComponentAtNode(container);
-
-        done();
-    });
+    Code.expect(form).to.exist();
+    done();
+  });
 
 
-    lab.test('it replaces state when receiving new props where show is false', function (done) {
+  lab.test('it handles unmounting', function (done) {
 
-        var FormWithContext = StubRouterContext(Form, {});
-        var FormEl = React.createElement(FormWithContext, mockProps);
-        var form = TestUtils.renderIntoDocument(FormEl);
+    var container = global.document.createElement('div');
+    var FormWithContext = StubRouterContext(Form, {});
+    var FormEl = React.createElement(FormWithContext, mockProps);
 
-        mockProps.data.show = false;
-        form.setProps(mockProps);
+    React.render(FormEl, container);
+    React.unmountComponentAtNode(container);
 
-        Code.expect(form).to.exist();
-        done();
-    });
-
-
-    lab.test('it focuses when receiving new props where show is true', function (done) {
-
-        var FormWithContext = StubRouterContext(Form, {});
-        var FormEl = React.createElement(FormWithContext, mockProps);
-        var form = TestUtils.renderIntoDocument(FormEl);
-        var realSetTimeout = setTimeout;
-
-        setTimeout = function (handler) {
-
-            setTimeout = realSetTimeout;
-
-            handler();
-            done();
-        };
-
-        mockProps.data.show = true;
-        form.setProps(mockProps);
-    });
+    done();
+  });
 
 
-    lab.test('it handles a submit event', function (done) {
+  lab.test('it replaces state when receiving new props where show is false', function (done) {
 
-        stub.Actions.createNew = function () {
+    var FormWithContext = StubRouterContext(Form, {});
+    var FormEl = React.createElement(FormWithContext, mockProps);
+    var form = TestUtils.renderIntoDocument(FormEl);
 
-            done();
-        };
+    mockProps.data.show = false;
+    form.setProps(mockProps);
 
-        var FormWithContext = StubRouterContext(Form, {});
-        var FormEl = React.createElement(FormWithContext, mockProps);
-        var form = TestUtils.renderIntoDocument(FormEl);
-        var formTag = TestUtils.findRenderedDOMComponentWithTag(form, 'form');
-
-        TestUtils.Simulate.submit(formTag.getDOMNode());
-    });
+    Code.expect(form).to.exist();
+    done();
+  });
 
 
-    lab.test('it renders with success state', function (done) {
+  lab.test('it focuses when receiving new props where show is true', function (done) {
 
-        var FormWithContext = StubRouterContext(Form, {});
-        var FormEl = React.createElement(FormWithContext, mockProps);
-        var form = TestUtils.renderIntoDocument(FormEl);
+    var FormWithContext = StubRouterContext(Form, {});
+    var FormEl = React.createElement(FormWithContext, mockProps);
+    var form = TestUtils.renderIntoDocument(FormEl);
+    var realSetTimeout = setTimeout;
 
-        mockProps.data.success = true;
-        form.setProps(mockProps);
+    setTimeout = function (handler) {
 
-        var alerts = TestUtils.scryRenderedDOMComponentsWithClass(form, 'alert-success');
+      setTimeout = realSetTimeout;
 
-        Code.expect(alerts.length).to.equal(1);
-        done();
-    });
+      handler();
+      done();
+    };
+
+    mockProps.data.show = true;
+    form.setProps(mockProps);
+  });
 
 
-    lab.test('it renders with error state', function (done) {
+  lab.test('it handles a submit event', function (done) {
 
-        var FormWithContext = StubRouterContext(Form, {});
-        var FormEl = React.createElement(FormWithContext, mockProps);
-        var form = TestUtils.renderIntoDocument(FormEl);
+    stub.Actions.createNew = function () {
 
-        mockProps.data.error = 'Whoops.';
-        form.setProps(mockProps);
+      done();
+    };
 
-        var alerts = TestUtils.scryRenderedDOMComponentsWithClass(form, 'alert-danger');
+    var FormWithContext = StubRouterContext(Form, {});
+    var FormEl = React.createElement(FormWithContext, mockProps);
+    var form = TestUtils.renderIntoDocument(FormEl);
+    var formTag = TestUtils.findRenderedDOMComponentWithTag(form, 'form');
 
-        Code.expect(alerts.length).to.equal(1);
-        done();
-    });
+    TestUtils.Simulate.submit(formTag.getDOMNode());
+  });
+
+
+  lab.test('it renders with success state', function (done) {
+
+    var FormWithContext = StubRouterContext(Form, {});
+    var FormEl = React.createElement(FormWithContext, mockProps);
+    var form = TestUtils.renderIntoDocument(FormEl);
+
+    mockProps.data.success = true;
+    form.setProps(mockProps);
+
+    var alerts = TestUtils.scryRenderedDOMComponentsWithClass(form, 'alert-success');
+
+    Code.expect(alerts.length).to.equal(1);
+    done();
+  });
+
+
+  lab.test('it renders with error state', function (done) {
+
+    var FormWithContext = StubRouterContext(Form, {});
+    var FormEl = React.createElement(FormWithContext, mockProps);
+    var form = TestUtils.renderIntoDocument(FormEl);
+
+    mockProps.data.error = 'Whoops.';
+    form.setProps(mockProps);
+
+    var alerts = TestUtils.scryRenderedDOMComponentsWithClass(form, 'alert-danger');
+
+    Code.expect(alerts.length).to.equal(1);
+    done();
+  });
 });

@@ -15,90 +15,90 @@ var lab = exports.lab = Lab.script();
 var dir = __dirname.toString();
 var request, server;
 var ModelsPlugin = {
-    register: require('hapi-mongo-models'),
-    options: Manifest.get('/plugins')['hapi-mongo-models']
+  register: require('hapi-mongo-models'),
+  options: Manifest.get('/plugins')['hapi-mongo-models']
 };
 
 
 lab.before(function (done) {
 
-    var plugins = [ HapiAuth, ModelsPlugin, AuthPlugin, LoginPlugin ];
-    server = new Hapi.Server();
-    server.connection({ port: Config.get('/port/web') });
-    server.views({
-        engines: { jsx: require('hapi-react-views') },
-        path: './server/web',
-        relativeTo: Path.join(dir, '..', '..', '..')
-    });
-    server.register(plugins, function (err) {
+  var plugins = [ HapiAuth, ModelsPlugin, AuthPlugin, LoginPlugin ];
+  server = new Hapi.Server();
+  server.connection({ port: Config.get('/port/web') });
+  server.views({
+    engines: { jsx: require('hapi-react-views') },
+    path: './server/web',
+    relativeTo: Path.join(dir, '..', '..', '..')
+  });
+  server.register(plugins, function (err) {
 
-        if (err) {
-            return done(err);
-        }
+    if (err) {
+      return done(err);
+    }
 
-        done();
-    });
+    done();
+  });
 });
 
 
 lab.experiment('Login Page View', function () {
 
-    lab.beforeEach(function (done) {
+  lab.beforeEach(function (done) {
 
-        request = {
-            method: 'GET',
-            url: '/login'
-        };
+    request = {
+      method: 'GET',
+      url: '/login'
+    };
 
-        done();
+    done();
+  });
+
+
+  lab.test('it renders properly', function (done) {
+
+    server.inject(request, function (response) {
+
+      Code.expect(response.result).to.match(/Sign In/i);
+      Code.expect(response.statusCode).to.equal(200);
+
+      done();
     });
+  });
 
 
-    lab.test('it renders properly', function (done) {
+  lab.test('it redirects to /admin when user is authenticated as an admin', function (done) {
 
-        server.inject(request, function (response) {
+    request.credentials = AuthenticatedAdmin;
 
-            Code.expect(response.result).to.match(/Sign In/i);
-            Code.expect(response.statusCode).to.equal(200);
+    server.inject(request, function (response) {
 
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(302);
+      done();
     });
+  });
 
 
-    lab.test('it redirects to /admin when user is authenticated as an admin', function (done) {
+  lab.test('it redirects to /account when user is authenticated as an account', function (done) {
 
-        request.credentials = AuthenticatedAdmin;
+    request.credentials = AuthenticatedAccount;
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(302);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(302);
+      done();
     });
+  });
 
 
-    lab.test('it redirects to /account when user is authenticated as an account', function (done) {
+  lab.test('it does not redirect when user is authenticated if the path is logout', function (done) {
 
-        request.credentials = AuthenticatedAccount;
+    request.url += '/logout';
+    request.credentials = AuthenticatedAccount;
 
-        server.inject(request, function (response) {
+    server.inject(request, function (response) {
 
-            Code.expect(response.statusCode).to.equal(302);
-            done();
-        });
+      Code.expect(response.statusCode).to.equal(200);
+      done();
     });
-
-
-    lab.test('it does not redirect when user is authenticated if the path is logout', function (done) {
-
-        request.url += '/logout';
-        request.credentials = AuthenticatedAccount;
-
-        server.inject(request, function (response) {
-
-            Code.expect(response.statusCode).to.equal(200);
-            done();
-        });
-    });
+  });
 });

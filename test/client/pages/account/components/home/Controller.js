@@ -10,39 +10,39 @@ var container = global.document.createElement('div');
 
 lab.afterEach(function (done) {
 
-    React.unmountComponentAtNode(container);
-    done();
+  React.unmountComponentAtNode(container);
+  done();
 });
 
 
 lab.experiment('Account Home Component', function () {
 
-    lab.test('it renders normally', function (done) {
+  lab.test('it renders normally', function (done) {
 
-        var ComponentEl = React.createElement(Component, {});
-        var component = React.render(ComponentEl, container);
+    var ComponentEl = React.createElement(Component, {});
+    var component = React.render(ComponentEl, container);
 
-        Code.expect(component).to.exist();
+    Code.expect(component).to.exist();
+    done();
+  });
+
+
+  lab.test('it refreshes the time with interval handler', function (done) {
+
+    var realSetInterval = setInterval;
+
+    setInterval = function (handler, time) {
+
+      return realSetInterval(function () {
+
+        handler();
+        setInterval = realSetInterval;
         done();
-    });
+      });
+    };
 
+    var ComponentEl = React.createElement(Component, {});
 
-    lab.test('it refreshes the time with interval handler', function (done) {
-
-        var realSetInterval = setInterval;
-
-        setInterval = function (handler, time) {
-
-            return realSetInterval(function () {
-
-                handler();
-                setInterval = realSetInterval;
-                done();
-            });
-        };
-
-        var ComponentEl = React.createElement(Component, {});
-
-        React.render(ComponentEl, container);
-    });
+    React.render(ComponentEl, container);
+  });
 });

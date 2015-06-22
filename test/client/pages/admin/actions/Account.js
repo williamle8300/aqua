@@ -8,524 +8,524 @@ var Constants = require('../../../../../client/pages/admin/constants/Account');
 var lab = exports.lab = Lab.script();
 var ActionTypes = Constants.ActionTypes;
 var stub = {
-    Fetch: function () {
+  Fetch: function () {
 
-        stub.Fetch.guts.apply(null, arguments);
-    },
-    Dispatcher: {
-        handleAction: function () {
+    stub.Fetch.guts.apply(null, arguments);
+  },
+  Dispatcher: {
+    handleAction: function () {
 
-            stub.Dispatcher.handleAction.guts.apply(null, arguments);
-        }
-    },
-    MeActions: {
-        saveMe: function () {}
+      stub.Dispatcher.handleAction.guts.apply(null, arguments);
     }
+  },
+  MeActions: {
+    saveMe: function () {}
+  }
 };
 var Actions = Proxyquire('../../../../../client/pages/admin/actions/Account', {
-    'flux-dispatcher': stub.Dispatcher,
-    '../../../helpers/jsonFetch': stub.Fetch
+  'flux-dispatcher': stub.Dispatcher,
+  '../../../helpers/jsonFetch': stub.Fetch
 });
 
 
 lab.experiment('Admin Account Actions', function () {
 
-    lab.test('it handles getResults successfully', function (done) {
+  lab.test('it handles getResults successfully', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.GET_RESULTS_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.GET_RESULTS_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(null, {});
-        };
+      callback(null, {});
+    };
 
-        Actions.getResults({});
-    });
+    Actions.getResults({});
+  });
 
 
-    lab.test('it handles getResults when xhr fails', function (done) {
+  lab.test('it handles getResults when xhr fails', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.GET_RESULTS_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.GET_RESULTS_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(new Error('Blamo'), {});
-        };
+      callback(new Error('Blamo'), {});
+    };
 
-        Actions.getResults({});
-    });
+    Actions.getResults({});
+  });
 
 
-    lab.test('it handles getDetails successfully', function (done) {
+  lab.test('it handles getDetails successfully', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.GET_DETAILS_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.GET_DETAILS_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(null, {});
-        };
+      callback(null, {});
+    };
 
-        Actions.getDetails({});
-    });
+    Actions.getDetails({});
+  });
 
 
-    lab.test('it handles getDetails when xhr fails', function (done) {
+  lab.test('it handles getDetails when xhr fails', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.GET_DETAILS_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.GET_DETAILS_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(new Error('Blamo'), {});
-        };
+      callback(new Error('Blamo'), {});
+    };
 
-        Actions.getDetails({});
-    });
+    Actions.getDetails({});
+  });
 
 
-    lab.test('it handles showCreateNew', function (done) {
+  lab.test('it handles showCreateNew', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.SHOW_CREATE_NEW) {
-                done();
-            }
-        };
+      if (type === ActionTypes.SHOW_CREATE_NEW) {
+        done();
+      }
+    };
 
-        Actions.showCreateNew({});
-    });
+    Actions.showCreateNew({});
+  });
 
 
-    lab.test('it handles hideCreateNew', function (done) {
+  lab.test('it handles hideCreateNew', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.HIDE_CREATE_NEW) {
-                done();
-            }
-        };
+      if (type === ActionTypes.HIDE_CREATE_NEW) {
+        done();
+      }
+    };
 
-        Actions.hideCreateNew({});
-    });
+    Actions.hideCreateNew({});
+  });
 
 
-    lab.test('it handles createNew successfully (without caller)', function (done) {
+  lab.test('it handles createNew successfully (without caller)', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.CREATE_NEW_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.CREATE_NEW_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(null, {});
-        };
+      callback(null, {});
+    };
 
-        Actions.createNew({});
-    });
+    Actions.createNew({});
+  });
 
 
-    lab.test('it handles createNew successfully (with caller)', function (done) {
+  lab.test('it handles createNew successfully (with caller)', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.CREATE_NEW_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.CREATE_NEW_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(null, {});
-        };
+      callback(null, {});
+    };
 
-        var mockCaller = {
-            transitionTo: function () {}
-        };
+    var mockCaller = {
+      transitionTo: function () {}
+    };
 
-        Actions.createNew({}, mockCaller);
-    });
+    Actions.createNew({}, mockCaller);
+  });
 
 
-    lab.test('it handles createNew when xhr fails', function (done) {
+  lab.test('it handles createNew when xhr fails', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.CREATE_NEW_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.CREATE_NEW_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(new Error('Blamo'), {});
-        };
+      callback(new Error('Blamo'), {});
+    };
 
-        Actions.createNew({});
-    });
+    Actions.createNew({});
+  });
 
 
-    lab.test('it handles saveDetails successfully', function (done) {
+  lab.test('it handles saveDetails successfully', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.SAVE_DETAILS_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.SAVE_DETAILS_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(null, {});
-        };
+      callback(null, {});
+    };
 
-        Actions.saveDetails({});
-    });
+    Actions.saveDetails({});
+  });
 
 
-    lab.test('it handles saveDetails when xhr fails', function (done) {
+  lab.test('it handles saveDetails when xhr fails', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.SAVE_DETAILS_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.SAVE_DETAILS_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(new Error('Blamo'), {});
-        };
+      callback(new Error('Blamo'), {});
+    };
 
-        Actions.saveDetails({});
-    });
+    Actions.saveDetails({});
+  });
 
 
-    lab.test('it handles linkUser successfully', function (done) {
+  lab.test('it handles linkUser successfully', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.LINK_USER_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.LINK_USER_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(null, {});
-        };
+      callback(null, {});
+    };
 
-        Actions.linkUser({});
-    });
+    Actions.linkUser({});
+  });
 
 
-    lab.test('it handles linkUser when xhr fails', function (done) {
+  lab.test('it handles linkUser when xhr fails', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.LINK_USER_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.LINK_USER_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(new Error('Blamo'), {});
-        };
+      callback(new Error('Blamo'), {});
+    };
 
-        Actions.linkUser({});
-    });
+    Actions.linkUser({});
+  });
 
 
-    lab.test('it handles unlinkUser successfully', function (done) {
+  lab.test('it handles unlinkUser successfully', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.UNLINK_USER_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.UNLINK_USER_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(null, {});
-        };
+      callback(null, {});
+    };
 
-        Actions.unlinkUser({});
-    });
+    Actions.unlinkUser({});
+  });
 
 
-    lab.test('it handles unlinkUser when xhr fails', function (done) {
+  lab.test('it handles unlinkUser when xhr fails', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.UNLINK_USER_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.UNLINK_USER_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(new Error('Blamo'), {});
-        };
+      callback(new Error('Blamo'), {});
+    };
 
-        Actions.unlinkUser({});
-    });
+    Actions.unlinkUser({});
+  });
 
 
-    lab.test('it handles newStatus successfully', function (done) {
+  lab.test('it handles newStatus successfully', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.NEW_STATUS_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.NEW_STATUS_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(null, {});
-        };
+      callback(null, {});
+    };
 
-        Actions.newStatus({});
-    });
+    Actions.newStatus({});
+  });
 
 
-    lab.test('it handles newStatus when xhr fails', function (done) {
+  lab.test('it handles newStatus when xhr fails', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.NEW_STATUS_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.NEW_STATUS_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(new Error('Blamo'), {});
-        };
+      callback(new Error('Blamo'), {});
+    };
 
-        Actions.newStatus({});
-    });
+    Actions.newStatus({});
+  });
 
 
-    lab.test('it handles newNote successfully', function (done) {
+  lab.test('it handles newNote successfully', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.NEW_NOTE_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.NEW_NOTE_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(null, {});
-        };
+      callback(null, {});
+    };
 
-        Actions.newNote({});
-    });
+    Actions.newNote({});
+  });
 
 
-    lab.test('it handles newNote when xhr fails', function (done) {
+  lab.test('it handles newNote when xhr fails', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.NEW_NOTE_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.NEW_NOTE_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(new Error('Blamo'), {});
-        };
+      callback(new Error('Blamo'), {});
+    };
 
-        Actions.newNote({});
-    });
+    Actions.newNote({});
+  });
 
 
-    lab.test('it handles delete successfully (without caller)', function (done) {
+  lab.test('it handles delete successfully (without caller)', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.DELETE_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.DELETE_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(null, {});
-        };
+      callback(null, {});
+    };
 
 
-        Actions.delete({});
-    });
+    Actions.delete({});
+  });
 
 
-    lab.test('it handles delete successfully (with caller)', function (done) {
+  lab.test('it handles delete successfully (with caller)', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.DELETE_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.DELETE_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(null, {});
-        };
+      callback(null, {});
+    };
 
 
-        var mockCaller = {
-            transitionTo: function () {}
-        };
+    var mockCaller = {
+      transitionTo: function () {}
+    };
 
-        Actions.delete({}, mockCaller);
-    });
+    Actions.delete({}, mockCaller);
+  });
 
 
-    lab.test('it handles delete when xhr fails', function (done) {
+  lab.test('it handles delete when xhr fails', function (done) {
 
-        stub.Dispatcher.handleAction.guts = function (source, type, data) {
+    stub.Dispatcher.handleAction.guts = function (source, type, data) {
 
-            Code.expect(type).to.be.an.instanceOf(FluxConstant);
+      Code.expect(type).to.be.an.instanceOf(FluxConstant);
 
-            if (type === ActionTypes.DELETE_RESPONSE) {
-                done();
-            }
-        };
+      if (type === ActionTypes.DELETE_RESPONSE) {
+        done();
+      }
+    };
 
-        stub.Fetch.guts = function (options, callback) {
+    stub.Fetch.guts = function (options, callback) {
 
-            Code.expect(options).to.be.an.object();
-            Code.expect(callback).to.be.a.function();
+      Code.expect(options).to.be.an.object();
+      Code.expect(callback).to.be.a.function();
 
-            callback(new Error('Blamo'), {});
-        };
+      callback(new Error('Blamo'), {});
+    };
 
-        Actions.delete({});
-    });
+    Actions.delete({});
+  });
 });

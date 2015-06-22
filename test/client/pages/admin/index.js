@@ -8,54 +8,54 @@ var Proxyquire = require('proxyquire');
 var TestLocation = new RouterTestLocation();
 var lab = exports.lab = Lab.script();
 var stub = {
-    RedirectActions: {
-        saveReturnUrl: function () {}
-    },
-    ReactRouter: {
-        HistoryLocation: TestLocation
-    }
+  RedirectActions: {
+    saveReturnUrl: function () {}
+  },
+  ReactRouter: {
+    HistoryLocation: TestLocation
+  }
 };
 var App = Proxyquire('../../../../client/pages/admin/index', {
-    '../../actions/Redirect': stub.RedirectActions,
-    'react-router': stub.ReactRouter
+  '../../actions/Redirect': stub.RedirectActions,
+  'react-router': stub.ReactRouter
 });
 var mountNode;
 
 
 lab.beforeEach(function (done) {
 
-    TestLocation.history = [ '/admin' ];
-    done();
+  TestLocation.history = [ '/admin' ];
+  done();
 });
 
 
 lab.before(function (done) {
 
-    mountNode = global.document.createElement('div');
-    mountNode.id = 'app-mount';
-    global.document.body.appendChild(mountNode);
+  mountNode = global.document.createElement('div');
+  mountNode.id = 'app-mount';
+  global.document.body.appendChild(mountNode);
 
-    done();
+  done();
 });
 
 
 lab.after(function (done) {
 
-    React.unmountComponentAtNode(mountNode);
-    global.document.body.removeChild(mountNode);
-    delete global.window.app;
+  React.unmountComponentAtNode(mountNode);
+  global.document.body.removeChild(mountNode);
+  delete global.window.app;
 
-    done();
+  done();
 });
 
 
 lab.experiment('Admin App', function () {
 
-    lab.test('it renders normally', function (done) {
+  lab.test('it renders normally', function (done) {
 
-        App.blastoff();
+    App.blastoff();
 
-        Code.expect(App.mainElement).to.be.an.object();
-        done();
-    });
+    Code.expect(App.mainElement).to.be.an.object();
+    done();
+  });
 });

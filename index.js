@@ -3,7 +3,7 @@ var Manifest = require('./manifest');
 
 
 var composeOptions = {
-    relativeTo: __dirname
+  relativeTo: __dirname
 };
 
 
